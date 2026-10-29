@@ -1,0 +1,2621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Crect x=%272%27 y=%272%27 width=%2720%27 height=%2720%27 rx=%274%27 fill=%27%23141a22%27/%3E%3Cpath d=%27M7 8.5 10 12l-3 3.5%27 fill=%27none%27 stroke=%27white%27 stroke-width=%272%27 stroke-linecap=%27round%27/%3E%3Cpath d=%27M12.5 15.5H17%27 stroke=%27%232b48c9%27 stroke-width=%272%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Pairwise Interview Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Practice AI-assisted coding interviews: a coding assistant, a fixed token budget, real tests and a structured scorecard.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+.CodeMirror{font-family:monospace;height:300px;color:#000;direction:ltr}.CodeMirror-lines{padding:4px 0}.CodeMirror pre.CodeMirror-line,.CodeMirror pre.CodeMirror-line-like{padding:0 4px}.CodeMirror-gutter-filler,.CodeMirror-scrollbar-filler{background-color:#fff}.CodeMirror-gutters{border-right:1px solid #ddd;background-color:#f7f7f7;white-space:nowrap}.CodeMirror-linenumber{padding:0 3px 0 5px;min-width:20px;text-align:right;color:#999;white-space:nowrap}.CodeMirror-guttermarker{color:#000}.CodeMirror-guttermarker-subtle{color:#999}.CodeMirror-cursor{border-left:1px solid #000;border-right:none;width:0}.CodeMirror div.CodeMirror-secondarycursor{border-left:1px solid silver}.cm-fat-cursor .CodeMirror-cursor{width:auto;border:0!important;background:#7e7}.cm-fat-cursor div.CodeMirror-cursors{z-index:1}.cm-fat-cursor .CodeMirror-line::selection,.cm-fat-cursor .CodeMirror-line>span::selection,.cm-fat-cursor .CodeMirror-line>span>span::selection{background:0 0}.cm-fat-cursor .CodeMirror-line::-moz-selection,.cm-fat-cursor .CodeMirror-line>span::-moz-selection,.cm-fat-cursor .CodeMirror-line>span>span::-moz-selection{background:0 0}.cm-fat-cursor{caret-color:transparent}@-moz-keyframes blink{50%{background-color:transparent}}@-webkit-keyframes blink{50%{background-color:transparent}}@keyframes blink{50%{background-color:transparent}}.cm-tab{display:inline-block;text-decoration:inherit}.CodeMirror-rulers{position:absolute;left:0;right:0;top:-50px;bottom:0;overflow:hidden}.CodeMirror-ruler{border-left:1px solid #ccc;top:0;bottom:0;position:absolute}.cm-s-default .cm-header{color:#00f}.cm-s-default .cm-quote{color:#090}.cm-negative{color:#d44}.cm-positive{color:#292}.cm-header,.cm-strong{font-weight:700}.cm-em{font-style:italic}.cm-link{text-decoration:underline}.cm-strikethrough{text-decoration:line-through}.cm-s-default .cm-keyword{color:#708}.cm-s-default .cm-atom{color:#219}.cm-s-default .cm-number{color:#164}.cm-s-default .cm-def{color:#00f}.cm-s-default .cm-variable-2{color:#05a}.cm-s-default .cm-type,.cm-s-default .cm-variable-3{color:#085}.cm-s-default .cm-comment{color:#a50}.cm-s-default .cm-string{color:#a11}.cm-s-default .cm-string-2{color:#f50}.cm-s-default .cm-meta{color:#555}.cm-s-default .cm-qualifier{color:#555}.cm-s-default .cm-builtin{color:#30a}.cm-s-default .cm-bracket{color:#997}.cm-s-default .cm-tag{color:#170}.cm-s-default .cm-attribute{color:#00c}.cm-s-default .cm-hr{color:#999}.cm-s-default .cm-link{color:#00c}.cm-s-default .cm-error{color:red}.cm-invalidchar{color:red}.CodeMirror-composing{border-bottom:2px solid}div.CodeMirror span.CodeMirror-matchingbracket{color:#0b0}div.CodeMirror span.CodeMirror-nonmatchingbracket{color:#a22}.CodeMirror-matchingtag{background:rgba(255,150,0,.3)}.CodeMirror-activeline-background{background:#e8f2ff}.CodeMirror{position:relative;overflow:hidden;background:#fff}.CodeMirror-scroll{overflow:scroll!important;margin-bottom:-50px;margin-right:-50px;padding-bottom:50px;height:100%;outline:0;position:relative;z-index:0}.CodeMirror-sizer{position:relative;border-right:50px solid transparent}.CodeMirror-gutter-filler,.CodeMirror-hscrollbar,.CodeMirror-scrollbar-filler,.CodeMirror-vscrollbar{position:absolute;z-index:6;display:none;outline:0}.CodeMirror-vscrollbar{right:0;top:0;overflow-x:hidden;overflow-y:scroll}.CodeMirror-hscrollbar{bottom:0;left:0;overflow-y:hidden;overflow-x:scroll}.CodeMirror-scrollbar-filler{right:0;bottom:0}.CodeMirror-gutter-filler{left:0;bottom:0}.CodeMirror-gutters{position:absolute;left:0;top:0;min-height:100%;z-index:3}.CodeMirror-gutter{white-space:normal;height:100%;display:inline-block;vertical-align:top;margin-bottom:-50px}.CodeMirror-gutter-wrapper{position:absolute;z-index:4;background:0 0!important;border:none!important}.CodeMirror-gutter-background{position:absolute;top:0;bottom:0;z-index:4}.CodeMirror-gutter-elt{position:absolute;cursor:default;z-index:4}.CodeMirror-gutter-wrapper ::selection{background-color:transparent}.CodeMirror-gutter-wrapper ::-moz-selection{background-color:transparent}.CodeMirror-lines{cursor:text;min-height:1px}.CodeMirror pre.CodeMirror-line,.CodeMirror pre.CodeMirror-line-like{-moz-border-radius:0;-webkit-border-radius:0;border-radius:0;border-width:0;background:0 0;font-family:inherit;font-size:inherit;margin:0;white-space:pre;word-wrap:normal;line-height:inherit;color:inherit;z-index:2;position:relative;overflow:visible;-webkit-tap-highlight-color:transparent;-webkit-font-variant-ligatures:contextual;font-variant-ligatures:contextual}.CodeMirror-wrap pre.CodeMirror-line,.CodeMirror-wrap pre.CodeMirror-line-like{word-wrap:break-word;white-space:pre-wrap;word-break:normal}.CodeMirror-linebackground{position:absolute;left:0;right:0;top:0;bottom:0;z-index:0}.CodeMirror-linewidget{position:relative;z-index:2;padding:.1px}.CodeMirror-rtl pre{direction:rtl}.CodeMirror-code{outline:0}.CodeMirror-gutter,.CodeMirror-gutters,.CodeMirror-linenumber,.CodeMirror-scroll,.CodeMirror-sizer{-moz-box-sizing:content-box;box-sizing:content-box}.CodeMirror-measure{position:absolute;width:100%;height:0;overflow:hidden;visibility:hidden}.CodeMirror-cursor{position:absolute;pointer-events:none}.CodeMirror-measure pre{position:static}div.CodeMirror-cursors{visibility:hidden;position:relative;z-index:3}div.CodeMirror-dragcursors{visibility:visible}.CodeMirror-focused div.CodeMirror-cursors{visibility:visible}.CodeMirror-selected{background:#d9d9d9}.CodeMirror-focused .CodeMirror-selected{background:#d7d4f0}.CodeMirror-crosshair{cursor:crosshair}.CodeMirror-line::selection,.CodeMirror-line>span::selection,.CodeMirror-line>span>span::selection{background:#d7d4f0}.CodeMirror-line::-moz-selection,.CodeMirror-line>span::-moz-selection,.CodeMirror-line>span>span::-moz-selection{background:#d7d4f0}.cm-searching{background-color:#ffa;background-color:rgba(255,255,0,.4)}.cm-force-border{padding-right:.1px}@media print{.CodeMirror div.CodeMirror-cursors{visibility:hidden}}.cm-tab-wrap-hack:after{content:''}span.CodeMirror-selectedtext{background:0 0}
+/* Layout: a working instrument. Lobby is a two-column setup sheet; the session is a three-pane workbench
+   (brief | editor + console | assistant) under a top bar whose token gauge is the one bold element. */
+:root {
+  --bg: #e9ecef;
+  --panel: #f7f8f9;
+  --raised: #ffffff;
+  --ink: #141a22;
+  --ink-2: #4b5563;
+  --ink-3: #79818f;
+  --line: #d3d8de;
+  --line-2: #e2e6ea;
+  --accent: #2b48c9;
+  --accent-soft: #e3e8fb;
+  --accent-ink: #ffffff;
+  --in: #9fb0f0;
+  --out: #2b48c9;
+  --ok: #1d7a4c;
+  --ok-soft: #dcf0e5;
+  --warn: #a86400;
+  --warn-soft: #fbedd6;
+  --bad: #b9352b;
+  --bad-soft: #f8e0dd;
+  --code-bg: #fbfbfc;
+  --code-gutter: #f1f3f5;
+  --sel: #d6defa;
+  --syn-kw: #8a2d8f;
+  --syn-str: #1c6b47;
+  --syn-num: #a2520f;
+  --syn-com: #7d8593;
+  --syn-def: #2b48c9;
+  --syn-prop: #1d4f7a;
+  --shadow: 0 1px 0 rgba(20, 26, 34, 0.04), 0 8px 24px -12px rgba(20, 26, 34, 0.18);
+  --f-ui: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-code: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --r-s: 4px;
+  --r-m: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101318; --panel: #161a21; --raised: #1c2129; --ink: #e5e8ed; --ink-2: #a3abb8; --ink-3: #737c8a;
+    --line: #2a303a; --line-2: #222731; --accent: #8c9dff; --accent-soft: #232a4a; --accent-ink: #0f1430;
+    --in: #3c4785; --out: #8c9dff; --ok: #5ccf93; --ok-soft: #173326; --warn: #f0b155; --warn-soft: #3a2c14;
+    --bad: #f07d72; --bad-soft: #3d1d1a; --code-bg: #12161c; --code-gutter: #161a21; --sel: #2c3765;
+    --syn-kw: #d797dc; --syn-str: #87d3a6; --syn-num: #f2b179; --syn-com: #6c7584; --syn-def: #9fb0ff; --syn-prop: #8cc4f0;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 10px 28px -12px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101318; --panel: #161a21; --raised: #1c2129; --ink: #e5e8ed; --ink-2: #a3abb8; --ink-3: #737c8a;
+  --line: #2a303a; --line-2: #222731; --accent: #8c9dff; --accent-soft: #232a4a; --accent-ink: #0f1430;
+  --in: #3c4785; --out: #8c9dff; --ok: #5ccf93; --ok-soft: #173326; --warn: #f0b155; --warn-soft: #3a2c14;
+  --bad: #f07d72; --bad-soft: #3d1d1a; --code-bg: #12161c; --code-gutter: #161a21; --sel: #2c3765;
+  --syn-kw: #d797dc; --syn-str: #87d3a6; --syn-num: #f2b179; --syn-com: #6c7584; --syn-def: #9fb0ff; --syn-prop: #8cc4f0;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 10px 28px -12px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--panel); }
+* { box-sizing: border-box; }
+h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+code, pre, kbd { font-family: var(--f-code); font-variant-ligatures: none; }
+.CodeMirror, .CodeMirror pre.CodeMirror-line { font-variant-ligatures: none; }
+:where(p, li) code { font-size: 0.86em; background: var(--accent-soft); color: var(--ink); padding: 0.08em 0.35em; border-radius: 3px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num {  }
+.muted { color: var(--ink-2); }
+.faint { color: var(--ink-3); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 36px; padding: 0 14px; border-radius: var(--r-s);
+  border: 1px solid var(--line); background: var(--raised); color: var(--ink);
+  font-weight: 500; font-size: 14px; white-space: nowrap;
+}
+.btn:hover:not(:disabled) { border-color: var(--ink-3); }
+.btn:disabled { opacity: 0.5; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.08); border-color: var(--accent); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
+.btn-ghost:hover:not(:disabled) { color: var(--ink); border-color: var(--line); }
+.btn-danger { color: var(--bad); }
+.btn-sm { height: 28px; padding: 0 10px; font-size: 13px; }
+.kbd { font-size: 11px; color: inherit; opacity: 0.7; font-family: var(--f-code); }
+
+/* Chips and pills */
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 500; background: var(--line-2); color: var(--ink-2); white-space: nowrap; }
+.chip.easy { background: var(--ok-soft); color: var(--ok); }
+.chip.medium { background: var(--warn-soft); color: var(--warn); }
+.chip.hard { background: var(--bad-soft); color: var(--bad); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+
+/* Views */
+.view { min-height: 100%; }
+#resume-slot:empty { display: none; }
+#view-session { height: 100%; display: flex; flex-direction: column; }
+
+/* ---------- Lobby ---------- */
+.lobby-top {
+  background: var(--panel); border-bottom: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.lobby-top .inner { max-width: 1200px; margin: 0 auto; height: 56px; display: flex; align-items: center; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; font-size: 17px; }
+.brand-mark { width: 22px; height: 22px; flex: none; }
+.brand small { font-weight: 500; color: var(--ink-3); font-size: 13px; letter-spacing: 0; }
+.lobby-top .spacer { flex: 1; }
+.lobby-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px;
+}
+.lobby-head { display: grid; gap: 10px; max-width: 760px; }
+.lobby-head h1 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.025em; font-weight: 700; }
+.lobby-head p { color: var(--ink-2); font-size: 16px; max-width: 64ch; }
+.lobby-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; align-items: start; }
+.section-title { font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+
+.problem-list { display: grid; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); overflow: hidden; }
+.problem-row {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 14px; align-items: start;
+  text-align: left; padding: 16px 18px; background: transparent; border: 0; border-top: 1px solid var(--line-2);
+}
+.problem-row:first-child { border-top: 0; }
+.problem-row:hover { background: var(--panel); }
+.problem-row[aria-checked="true"] { background: var(--accent-soft); }
+.radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--ink-3); margin-top: 2px; display: grid; place-items: center; }
+.problem-row[aria-checked="true"] .radio { border-color: var(--accent); }
+.problem-row[aria-checked="true"] .radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.pr-main { display: grid; gap: 4px; min-width: 0; }
+.pr-title { font-weight: 600; font-size: 15.5px; }
+.pr-team { color: var(--ink-3); font-weight: 500; }
+.pr-scn { color: var(--ink-2); font-size: 14px; }
+.pr-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pr-side { display: grid; justify-items: end; gap: 6px; font-size: 13px; color: var(--ink-3); }
+
+.setup { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow); display: grid; }
+.setup-sec { padding: 18px 20px; border-top: 1px solid var(--line-2); display: grid; gap: 10px; }
+.setup-sec:first-child { border-top: 0; }
+.setup-label { font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
+.setup-label span:last-child { font-weight: 400; color: var(--ink-3); }
+.field { height: 38px; width: 100%; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--bg); color: var(--ink); padding: 0 12px; font: inherit; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--line); border-radius: var(--r-s); overflow: hidden; }
+.seg button { border: 0; border-left: 1px solid var(--line); background: var(--raised); padding: 8px 4px; font-size: 13.5px; font-weight: 500; display: grid; gap: 1px; line-height: 1.2; }
+.seg button:first-child { border-left: 0; }
+.seg button small { font-size: 11px; color: var(--ink-3); font-weight: 400; }
+.seg button[aria-checked="true"] { background: var(--ink); color: var(--bg); }
+.seg button[aria-checked="true"] small { color: inherit; opacity: 0.7; }
+.hint { font-size: 12.5px; color: var(--ink-3); }
+.agent-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+.agent-status .dot { color: var(--ink-3); }
+.agent-status[data-mode="claude"] .dot, .agent-status[data-mode="byok"] .dot { color: var(--ok); }
+.agent-status[data-mode="offline"] .dot { color: var(--warn); }
+.setup-go { padding: 18px 20px; display: grid; gap: 10px; border-top: 1px solid var(--line-2); }
+.setup-go .btn { height: 44px; font-size: 15px; }
+
+.how { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); padding-top: 24px; }
+.how div { padding-right: 24px; display: grid; gap: 6px; align-content: start; }
+.how b { font-size: 14px; }
+.how p { font-size: 13.5px; color: var(--ink-2); }
+.how .step { font-family: var(--f-code); font-size: 12px; color: var(--accent); }
+
+.history { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); overflow: hidden; }
+.history-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 12px 18px; border-top: 1px solid var(--line-2); background: transparent; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; font-size: 14px; }
+.history-row:first-child { border-top: 0; }
+.history-row:hover { background: var(--panel); }
+.history-empty { padding: 20px 18px; color: var(--ink-3); font-size: 14px; }
+.resume-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 18px; border: 1px solid var(--accent); border-radius: var(--r-m); background: var(--accent-soft); }
+.resume-bar p { flex: 1; min-width: 220px; font-size: 14px; }
+
+/* Verdict pill */
+.verdict { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.v-strong_hire, .v-hire { background: var(--ok-soft); color: var(--ok); }
+.v-lean_hire { background: var(--accent-soft); color: var(--accent); }
+.v-lean_no_hire { background: var(--warn-soft); color: var(--warn); }
+.v-no_hire { background: var(--bad-soft); color: var(--bad); }
+
+/* ---------- Modal ---------- */
+.modal-back { position: fixed; inset: 0; background: rgba(10, 14, 20, 0.5); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.modal { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow); width: min(560px, 100%); max-height: calc(100% - 32px); overflow: auto; display: grid; }
+.modal-head { padding: 22px 24px 8px; display: grid; gap: 6px; }
+.modal-head h2 { font-size: 21px; letter-spacing: -0.015em; }
+.modal-body { padding: 8px 24px 4px; display: grid; gap: 14px; }
+.modal-body a { color: var(--accent); }
+.modal-body ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: var(--ink-2); font-size: 14.5px; }
+.modal-body li b { color: var(--ink); font-weight: 600; }
+.modal-facts { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: var(--r-s); }
+.modal-facts div { padding: 10px 12px; border-left: 1px solid var(--line); display: grid; gap: 2px; }
+.modal-facts div:first-child { border-left: 0; }
+.modal-facts small { font-size: 12px; color: var(--ink-3); }
+.modal-facts b { font-size: 17px;  }
+.modal-foot { padding: 18px 24px 22px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink-2); }
+.check input { margin-top: 3px; accent-color: var(--accent); }
+
+/* ---------- Session ---------- */
+.topbar {
+  flex: none; display: flex; align-items: center; gap: 16px; height: 58px;
+  background: var(--panel); border-bottom: 1px solid var(--line);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.tb-problem { display: grid; min-width: 0; line-height: 1.25; }
+.tb-problem b { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-problem span { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.tb-spacer { flex: 1; }
+.timer { display: grid; justify-items: end; line-height: 1.15; }
+.timer b { font-size: 20px; font-weight: 600;  letter-spacing: -0.01em; }
+.timer small { font-size: 11.5px; color: var(--ink-3); }
+.timer[data-state="warn"] b { color: var(--warn); }
+.timer[data-state="bad"] b { color: var(--bad); }
+
+/* Token gauge: the signature element */
+.gauge { display: grid; gap: 5px; width: 300px; }
+.gauge-nums { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; line-height: 1; }
+.gauge-nums b { font-size: 20px; font-weight: 600;  letter-spacing: -0.01em; }
+.gauge-nums span { font-size: 11.5px; color: var(--ink-3);  }
+.gauge-track { position: relative; height: 10px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--line-2) 0 calc(10% - 2px), transparent calc(10% - 2px) 10%); outline: 1px solid var(--line); overflow: hidden; display: flex; }
+.gauge-seg { height: 100%; display: flex; flex: none; border-right: 1px solid var(--panel); }
+.gauge-seg i { display: block; height: 100%; }
+.gauge-seg i.in { background: var(--in); }
+.gauge-seg i.out { background: var(--out); }
+.gauge-seg.live i.out { animation: pulse 1s ease-in-out infinite; }
+.gauge[data-state="warn"] .gauge-nums b { color: var(--warn); }
+.gauge[data-state="bad"] .gauge-nums b { color: var(--bad); }
+.gauge-preview { height: 100%; background: repeating-linear-gradient(135deg, var(--ink-3) 0 2px, transparent 2px 5px); opacity: 0.55; flex: none; }
+@keyframes pulse { 50% { opacity: 0.55; } }
+
+.workbench { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.6fr) minmax(320px, 1fr); }
+.pane { min-width: 0; min-height: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--panel); }
+.pane:last-child { border-right: 0; }
+.pane-head { flex: none; height: 42px; display: flex; align-items: center; gap: 4px; padding: 0 10px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.tab { height: 42px; padding: 0 10px; border: 0; background: none; font-size: 13.5px; font-weight: 500; color: var(--ink-3); border-bottom: 2px solid transparent; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pane-head .grow { flex: 1; }
+.pane-body { flex: 1; min-height: 0; overflow: auto; }
+
+/* Problem brief */
+.brief { padding: 20px 20px 40px; display: grid; gap: 18px; font-size: 14.5px; }
+.brief h2 { font-size: 20px; letter-spacing: -0.015em; line-height: 1.2; }
+.brief-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.scenario { padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--raised); color: var(--ink-2); font-size: 14px; border-radius: 0 var(--r-s) var(--r-s) 0; }
+.brief-body { display: grid; gap: 10px; color: var(--ink); }
+.brief-body ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.brief h3 { font-size: 13.5px; font-weight: 600; color: var(--ink-2); }
+.brief section { display: grid; gap: 8px; }
+pre.example, .inline-pre { margin: 0; padding: 12px 14px; background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--r-s); font-size: 12.5px; line-height: 1.55; overflow-x: auto; white-space: pre; }
+.constraints { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 4px; font-size: 13.5px; }
+.test-list { display: grid; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--raised); }
+.test-list div { display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-top: 1px solid var(--line-2); font-size: 13.5px; }
+.test-list div:first-child { border-top: 0; }
+.test-list .hidden-note { color: var(--ink-3); }
+details.followups summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-2); }
+details.followups ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; color: var(--ink-2); font-size: 13.5px; }
+.notes-wrap { padding: 16px; height: 100%; display: flex; flex-direction: column; gap: 10px; }
+.notes-wrap textarea { flex: 1; min-height: 240px; resize: none; width: 100%; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--raised); color: var(--ink); padding: 12px; font: 14px/1.55 var(--f-ui); }
+
+/* Editor column */
+.editor-col { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: var(--code-bg); }
+.file-tab { display: flex; align-items: center; gap: 8px; font-family: var(--f-code); font-size: 12.5px; color: var(--ink); padding: 0 6px; }
+.file-tab .lang { font-family: var(--f-ui); color: var(--ink-3); font-size: 12px; }
+.save-state { font-size: 12px; color: var(--ink-3); }
+.editor-host { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.editor-host .CodeMirror { height: 100%; font-family: var(--f-code); font-size: 13.5px; line-height: 1.6; background: var(--code-bg); color: var(--ink); }
+.editor-host textarea.fallback-editor { width: 100%; height: 100%; border: 0; resize: none; padding: 12px 16px; background: var(--code-bg); color: var(--ink); font: 13.5px/1.6 var(--f-code); tab-size: 2; outline: none; }
+.CodeMirror-gutters { background: var(--code-gutter); border-right: 1px solid var(--line-2); }
+.CodeMirror-linenumber { color: var(--ink-3); padding: 0 10px 0 6px; }
+.CodeMirror-cursor { border-left: 2px solid var(--accent); }
+.CodeMirror-selected, .CodeMirror-focused .CodeMirror-selected { background: var(--sel); }
+.CodeMirror-activeline-background { background: var(--line-2); }
+.CodeMirror-matchingbracket { color: var(--accent) !important; text-decoration: underline; }
+.cm-s-default .cm-keyword { color: var(--syn-kw); }
+.cm-s-default .cm-string, .cm-s-default .cm-string-2 { color: var(--syn-str); }
+.cm-s-default .cm-number, .cm-s-default .cm-atom { color: var(--syn-num); }
+.cm-s-default .cm-comment { color: var(--syn-com); font-style: italic; }
+.cm-s-default .cm-def { color: var(--syn-def); }
+.cm-s-default .cm-property { color: var(--syn-prop); }
+.cm-s-default .cm-variable, .cm-s-default .cm-variable-2, .cm-s-default .cm-variable-3, .cm-s-default .cm-operator, .cm-s-default .cm-punctuation { color: var(--ink); }
+.cm-flash { background: var(--accent-soft); transition: background 1.2s; }
+
+.console { border-top: 1px solid var(--line); background: var(--panel); display: grid; grid-template-rows: auto minmax(0, 1fr); height: 230px; }
+.console-head { height: 38px; display: flex; align-items: center; gap: 4px; padding: 0 10px; border-bottom: 1px solid var(--line-2); }
+.console-head .tab { height: 38px; }
+.console-body { overflow: auto; font-size: 13px; }
+.console-empty { padding: 16px; color: var(--ink-3); font-size: 13.5px; }
+.run-summary { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line-2); font-size: 13.5px; font-weight: 500; }
+.run-summary.ok { color: var(--ok); }
+.run-summary.bad { color: var(--bad); }
+.result { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--line-2); align-items: start; }
+.result .mark { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; margin-top: 2px; }
+.result.pass .mark { background: var(--ok-soft); color: var(--ok); }
+.result.fail .mark { background: var(--bad-soft); color: var(--bad); }
+.result .ms { font-size: 12px; color: var(--ink-3);  }
+.result .detail { grid-column: 2 / 4; display: grid; gap: 2px; font-family: var(--f-code); font-size: 12px; color: var(--ink-2); overflow-x: auto; }
+.result .detail span { white-space: pre; }
+.result .detail em { font-style: normal; color: var(--ink-3); }
+.log-line { font-family: var(--f-code); font-size: 12.5px; padding: 3px 14px; border-bottom: 1px solid var(--line-2); white-space: pre-wrap; word-break: break-word; }
+.compile-err { margin: 12px 14px; padding: 10px 12px; background: var(--bad-soft); color: var(--bad); border-radius: var(--r-s); font-family: var(--f-code); font-size: 12.5px; white-space: pre-wrap; }
+
+/* Assistant */
+.agent-col { background: var(--panel); }
+.agent-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); padding: 0 6px; }
+.agent-badge .dot { color: var(--ink-3); }
+.agent-badge[data-mode="claude"] .dot, .agent-badge[data-mode="byok"] .dot { color: var(--ok); }
+.agent-badge[data-mode="offline"] .dot { color: var(--warn); }
+.thread { padding: 16px 16px 24px; display: grid; gap: 18px; align-content: start; }
+.msg { display: grid; gap: 6px; min-width: 0; }
+.msg-meta { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--ink-3);  }
+.msg-meta b { color: var(--ink); font-size: 12.5px; font-weight: 600; }
+.msg.user .msg-text { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px; white-space: pre-wrap; word-break: break-word; font-size: 14px; }
+.msg-attach { display: flex; flex-wrap: wrap; gap: 6px; }
+.msg.agent .msg-text { font-size: 14px; display: grid; gap: 10px; min-width: 0; }
+.msg.agent .msg-text p, .msg.agent .msg-text li { line-height: 1.55; }
+.msg.agent .msg-text ul, .msg.agent .msg-text ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.msg.agent .msg-text h4 { font-size: 14px; }
+.thinking { color: var(--ink-3); font-size: 13.5px; display: flex; gap: 8px; align-items: center; }
+.thinking::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1s infinite; }
+.msg-error { font-size: 13px; color: var(--bad); }
+.cb { border: 1px solid var(--line); border-radius: var(--r-s); background: var(--code-bg); min-width: 0; overflow: hidden; }
+.cb-bar { display: flex; align-items: center; gap: 4px; padding: 4px 6px 4px 10px; border-bottom: 1px solid var(--line-2); background: var(--code-gutter); }
+.cb-bar span { font-family: var(--f-code); font-size: 11.5px; color: var(--ink-3); flex: 1; }
+.cb-bar button { height: 24px; padding: 0 8px; border-radius: 3px; border: 1px solid transparent; background: none; font-size: 12px; color: var(--ink-2); }
+.cb-bar button:hover:not(:disabled) { border-color: var(--line); color: var(--ink); background: var(--raised); }
+.cb-bar button:disabled { opacity: 0.45; }
+.cb pre { margin: 0; padding: 10px 12px; font-size: 12.5px; line-height: 1.55; overflow-x: auto; }
+.starters { display: grid; gap: 8px; padding: 4px 0; }
+.starters p { font-size: 13.5px; color: var(--ink-2); }
+.starters button { text-align: left; border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-s); padding: 9px 12px; font-size: 13.5px; color: var(--ink); display: flex; justify-content: space-between; gap: 10px; }
+.starters button:hover { border-color: var(--accent); }
+.starters button small { color: var(--ink-3); white-space: nowrap;  }
+
+.composer { flex: none; border-top: 1px solid var(--line); background: var(--raised); padding: 10px 12px 12px; display: grid; gap: 8px; }
+.ctx-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ctx-row > span { font-size: 12px; color: var(--ink-3); margin-right: 2px; }
+.toggle { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-size: 12.5px; color: var(--ink-2); }
+.toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.toggle small { color: var(--ink-3);  }
+.composer textarea { width: 100%; min-height: 64px; max-height: 180px; resize: vertical; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--bg); color: var(--ink); padding: 10px 12px; font: 14px/1.5 var(--f-ui); }
+.composer-foot { display: flex; align-items: center; gap: 10px; }
+.cost { flex: 1; font-size: 12px; color: var(--ink-3);  min-width: 0; }
+.cost b { color: var(--ink-2); font-weight: 600; }
+.cost.over b { color: var(--bad); }
+.locked { padding: 10px 12px; font-size: 13px; color: var(--bad); background: var(--bad-soft); border-radius: var(--r-s); }
+
+.mobile-tabs { display: none; }
+
+/* ---------- Evaluating ---------- */
+.eval-wrap { min-height: 100%; display: grid; place-items: center; padding: 40px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); }
+.eval-card { width: min(520px, 100%); display: grid; gap: 22px; }
+.eval-card h2 { font-size: 24px; letter-spacing: -0.02em; }
+.eval-steps { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); }
+.eval-step { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-top: 1px solid var(--line-2); font-size: 14.5px; color: var(--ink-3); }
+.eval-step:first-child { border-top: 0; }
+.eval-step .st { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line); flex: none; display: grid; place-items: center; font-size: 11px; }
+.eval-step[data-s="run"] { color: var(--ink); }
+.eval-step[data-s="run"] .st { border-color: var(--accent); border-top-color: transparent; animation: spin 0.8s linear infinite; }
+.eval-step[data-s="done"] { color: var(--ink-2); }
+.eval-step[data-s="done"] .st { background: var(--ok); border-color: var(--ok); color: var(--panel); }
+.eval-step .st-note { margin-left: auto; font-size: 12.5px; color: var(--ink-3);  }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Report ---------- */
+.report-wrap { max-width: 1080px; margin: 0 auto; padding-block: 32px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 36px; }
+.report-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.report-head .meta { font-size: 13px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.report-head h1 { font-size: clamp(26px, 3.2vw, 36px); line-height: 1.15; letter-spacing: -0.025em; margin: 10px 0 12px; }
+.report-head .summary { color: var(--ink-2); font-size: 15.5px; max-width: 68ch; }
+.score-block { display: grid; justify-items: end; gap: 8px; }
+.score-big { font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.04em;  }
+.score-big small { font-size: 20px; color: var(--ink-3); font-weight: 500; letter-spacing: 0; }
+.verdict.big { height: 30px; font-size: 14px; padding: 0 14px; }
+.source-note { font-size: 12px; color: var(--ink-3); text-align: right; max-width: 220px; }
+
+.stat-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); }
+.stat { padding: 14px 16px; border-left: 1px solid var(--line-2); display: grid; gap: 2px; }
+.stat:first-child { border-left: 0; }
+.stat small { font-size: 12.5px; color: var(--ink-3); }
+.stat b { font-size: 22px; font-weight: 600;  letter-spacing: -0.01em; }
+.stat span { font-size: 12.5px; color: var(--ink-2); }
+
+.r-section { display: grid; gap: 14px; }
+.r-section > h2 { font-size: 18px; letter-spacing: -0.01em; }
+.rubric { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); }
+.rubric-row { display: grid; grid-template-columns: 220px 96px minmax(0, 1fr); gap: 20px; padding: 16px 18px; border-top: 1px solid var(--line-2); }
+.rubric-row:first-child { border-top: 0; }
+.rubric-row h3 { font-size: 14.5px; }
+.rubric-row .weight { font-size: 12px; color: var(--ink-3); }
+.pips { display: flex; gap: 4px; align-items: center; height: 22px; }
+.pips i { width: 16px; height: 8px; border-radius: 2px; background: var(--line); }
+.pips[data-s="4"] i, .pips[data-s="3"] i:nth-child(-n+3) { background: var(--ok); }
+.pips[data-s="2"] i:nth-child(-n+2) { background: var(--warn); }
+.pips[data-s="1"] i:nth-child(1) { background: var(--bad); }
+.pips-label { font-size: 12px; color: var(--ink-3); }
+.rubric-row .ev { display: grid; gap: 6px; font-size: 14px; }
+.rubric-row .ev .imp { color: var(--ink-2); font-size: 13.5px; }
+.rubric-row .ev .imp b { font-weight: 600; color: var(--ink); }
+
+.two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.listbox { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.listbox h3 { font-size: 14px; }
+.listbox ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+
+.chart-box { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); padding: 16px 18px; display: grid; gap: 12px; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12.5px; color: var(--ink-2); }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i { width: 12px; height: 8px; border-radius: 2px; display: inline-block; }
+.turn-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.turn-table th, .turn-table td { text-align: left; padding: 7px 10px; border-top: 1px solid var(--line-2); vertical-align: top; }
+.turn-table th { font-weight: 600; color: var(--ink-3); font-size: 12px; border-top: 0; }
+.turn-table td.n { text-align: right;  white-space: nowrap; }
+.turn-table th.n { text-align: right; }
+.tbl-wrap { overflow-x: auto; }
+
+.tests-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+.timeline { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); padding: 6px 0; }
+.tl-row { display: grid; grid-template-columns: 56px 14px minmax(0, 1fr); gap: 10px; padding: 6px 18px; font-size: 13.5px; align-items: baseline; }
+.tl-row time {  color: var(--ink-3); font-size: 12.5px; text-align: right; }
+.tl-row i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); display: block; align-self: center; }
+.tl-row i.prompt { background: var(--accent); }
+.tl-row i.run { background: var(--ok); }
+.tl-row i.runfail { background: var(--bad); }
+.tl-row i.apply { background: var(--warn); }
+.tl-row i.paste { background: var(--bad); }
+.code-out { margin: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--code-bg); font-size: 12.5px; line-height: 1.6; overflow-x: auto; max-height: 520px; }
+.code-notes { display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); margin: 0; padding-left: 18px; }
+details.transcript { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); }
+details.transcript summary { padding: 14px 18px; cursor: pointer; font-weight: 600; font-size: 14.5px; }
+details.transcript .thread { border-top: 1px solid var(--line-2); }
+.report-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- Toast ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: var(--r-s); font-size: 14px; z-index: 60; box-shadow: var(--shadow); max-width: calc(100% - 32px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1180px) {
+  .gauge { width: 220px; }
+  .workbench { grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); }
+  .workbench .brief-pane { display: none; }
+  .workbench.show-brief .brief-pane { display: flex; position: fixed; z-index: 30; top: calc(58px + env(safe-area-inset-top, 0px)); left: 0; bottom: 0; width: min(440px, 92vw); box-shadow: var(--shadow); }
+  .brief-toggle { display: inline-flex !important; }
+}
+@media (max-width: 980px) {
+  .lobby-grid { grid-template-columns: minmax(0, 1fr); }
+  .setup { position: static; }
+  .how { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; }
+  .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stat:nth-child(4) { border-left: 0; }
+  .stat:nth-child(n+4) { border-top: 1px solid var(--line-2); }
+  .rubric-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .rubric-row .ev { grid-column: 1 / -1; }
+  .two-col, .tests-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .topbar { height: auto; flex-wrap: wrap; row-gap: 8px; padding-block: 8px; }
+  .tb-problem { flex: 1 1 100%; order: -1; }
+  .tb-spacer { display: none; }
+  .gauge { flex: 1; width: auto; min-width: 150px; }
+  .topbar .btn .label-long { display: none; }
+  .topbar { column-gap: 10px; }
+  .topbar > .brand { display: none; }
+  .topbar .btn { height: 34px; padding: 0 12px; }
+  .timer b, .gauge-nums b { font-size: 18px; }
+  .lobby-top .brand small { display: none; }
+  .agent-status { font-size: 12px; }
+  .stat:last-child { grid-column: 1 / -1; }
+  .workbench { grid-template-columns: minmax(0, 1fr); }
+  .workbench .pane { display: none; border-right: 0; }
+  .workbench .pane.m-active { display: flex; }
+  .workbench.show-brief .brief-pane { position: static; width: auto; box-shadow: none; }
+  .brief-toggle { display: none !important; }
+  .mobile-tabs { display: grid; grid-template-columns: repeat(3, 1fr); flex: none; border-top: 1px solid var(--line); background: var(--panel); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .mobile-tabs button { height: 48px; border: 0; background: none; font-size: 14px; font-weight: 500; color: var(--ink-3); }
+  .mobile-tabs button[aria-selected="true"] { color: var(--ink); box-shadow: inset 0 2px 0 var(--ink); }
+  .console { height: 200px; }
+  .how { grid-template-columns: minmax(0, 1fr); }
+  .history-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .history-row .h-hide { display: none; }
+  .report-head { grid-template-columns: minmax(0, 1fr); }
+  .score-block { justify-items: start; }
+  .source-note { text-align: left; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat:nth-child(odd) { border-left: 0; }
+  .stat:nth-child(4) { border-left: 1px solid var(--line-2); }
+  .stat:nth-child(n+3) { border-top: 1px solid var(--line-2); }
+  .modal-facts { grid-template-columns: 1fr; }
+  .modal-facts div { border-left: 0; border-top: 1px solid var(--line); }
+  .modal-facts div:first-child { border-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4" fill="var(--ink)"></rect><path d="M7 8.5 10 12l-3 3.5" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 15.5H17" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"></path></symbol>
+  </defs>
+</svg>
+
+<!-- Lobby -->
+<section id="view-lobby" class="view">
+  <header class="lobby-top">
+    <div class="inner">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Interview practice</small></div>
+      <div class="spacer"></div>
+      <div class="agent-status" id="lobby-agent-status" data-mode="checking"><span class="dot"></span><span>Connecting to the assistant…</span></div>
+    </div>
+  </header>
+  <div class="lobby-wrap">
+    <div class="lobby-head">
+      <h1>AI-assisted coding interview</h1>
+      <p>Solve a production-style problem with a coding assistant beside you and a fixed token allowance. Every message you send spends tokens. When you submit, you get a scorecard on correctness and on how you worked with the assistant.</p>
+    </div>
+    <div id="resume-slot"></div>
+    <div class="lobby-grid">
+      <div>
+        <div class="section-title"><span>Choose a problem</span><span class="faint" id="problem-count"></span></div>
+        <div class="problem-list" id="problem-list" role="radiogroup" aria-label="Problem"></div>
+      </div>
+      <aside class="setup" aria-label="Interview setup">
+        <div class="setup-sec">
+          <label class="setup-label" for="cand-name"><span>Candidate name</span><span>Shown on the scorecard</span></label>
+          <input id="cand-name" class="field" type="text" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Token budget</span><span id="budget-note"></span></div>
+          <div class="seg" id="seg-budget" role="radiogroup" aria-label="Token budget"></div>
+          <p class="hint">Counts the text the assistant reads (instructions, problem, your message, any code you attach, recent history) plus its reply. About 4 characters per token.</p>
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Time limit</span><span id="time-note"></span></div>
+          <div class="seg" id="seg-time" role="radiogroup" aria-label="Time limit"></div>
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Assistant model</span><span id="tier-note"></span></div>
+          <div class="seg" id="seg-tier" role="radiogroup" aria-label="Assistant model"></div>
+        </div>
+        <div class="setup-sec" id="conn-sec" hidden>
+          <div class="setup-label"><span>Claude connection</span><span id="conn-state"></span></div>
+          <button class="btn" id="btn-key">Connect your API key</button>
+          <p class="hint" id="conn-note"></p>
+        </div>
+        <div class="setup-go">
+          <button class="btn btn-primary" id="btn-start">Start interview</button>
+          <p class="hint" id="start-note"></p>
+        </div>
+      </aside>
+    </div>
+    <div class="how" aria-label="How the session works">
+      <div><span class="step">Step 1</span><b>Read the brief</b><p>A realistic task from a product team, with visible tests and hidden ones.</p></div>
+      <div><span class="step">Step 2</span><b>Work with the assistant</b><p>Ask, plan, generate and review code. Watch the token gauge as you go.</p></div>
+      <div><span class="step">Step 3</span><b>Verify and submit</b><p>Run the visible tests as often as you like. Hidden tests run on submit.</p></div>
+      <div><span class="step">Step 4</span><b>Read your scorecard</b><p>Six rubric areas with evidence from your session, plus a replay of every exchange.</p></div>
+    </div>
+    <div>
+      <div class="section-title"><span>Past sessions</span><span class="faint">Stored in this browser only</span></div>
+      <div class="history" id="history"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Session -->
+<section id="view-session" class="view" hidden>
+  <header class="topbar">
+    <button class="btn btn-ghost btn-sm brief-toggle" id="btn-brief" style="display:none" aria-controls="pane-brief">Problem</button>
+    <div class="brand" title="Pairwise"><svg class="brand-mark"><use href="#mark"></use></svg></div>
+    <div class="tb-problem"><b id="tb-title"></b><span id="tb-sub"></span></div>
+    <div class="tb-spacer"></div>
+    <div class="gauge" id="gauge" aria-live="polite">
+      <div class="gauge-nums"><b id="g-left">0</b><span id="g-of"></span></div>
+      <div class="gauge-track" id="g-track" role="meter" aria-label="Tokens used"></div>
+    </div>
+    <div class="timer" id="timer"><b id="t-left">00:00</b><small>remaining</small></div>
+    <button class="btn" id="btn-run" title="Run visible tests (Ctrl/⌘ + Enter)"><span>Run<span class="label-long"> tests</span></span><span class="kbd label-long">⌘↵</span></button>
+    <button class="btn btn-primary" id="btn-submit">Submit</button>
+  </header>
+  <div class="workbench" id="workbench">
+    <div class="pane brief-pane" id="pane-brief">
+      <div class="pane-head" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-btab="brief">Problem</button>
+        <button class="tab" role="tab" aria-selected="false" data-btab="notes">Notes</button>
+        <span class="grow"></span>
+      </div>
+      <div class="pane-body" id="brief-body"></div>
+      <div class="pane-body" id="notes-body" hidden>
+        <div class="notes-wrap">
+          <p class="hint">Plan here before you prompt. Notes cost no tokens and count toward problem decomposition.</p>
+          <textarea id="notes" placeholder="Approach, edge cases, questions for the interviewer…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="pane editor-col m-active" id="pane-editor">
+      <div class="pane-head">
+        <div class="file-tab">solution.js <span class="lang">JavaScript</span></div>
+        <span class="grow"></span>
+        <span class="save-state" id="save-state"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-reset">Reset code</button>
+      </div>
+      <div class="editor-host" id="editor-host"></div>
+      <div class="console">
+        <div class="console-head" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-ctab="tests">Test results</button>
+          <button class="tab" role="tab" aria-selected="false" data-ctab="logs">Console</button>
+          <span class="grow"></span>
+          <span class="save-state" id="run-meta"></span>
+        </div>
+        <div class="console-body" id="console-tests"><p class="console-empty">Run the visible tests to see results here. Hidden tests run when you submit.</p></div>
+        <div class="console-body" id="console-logs" hidden><p class="console-empty">console.log output from your code appears here.</p></div>
+      </div>
+    </div>
+    <div class="pane agent-col" id="pane-agent">
+      <div class="pane-head">
+        <b style="font-size:13.5px;padding:0 6px">Assistant</b>
+        <span class="agent-badge" id="agent-badge" data-mode="checking"><span class="dot"></span><span id="agent-badge-text">Connecting…</span></span>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-key-agent" hidden>Connect Claude</button>
+      </div>
+      <div class="pane-body" id="thread-scroll"><div class="thread" id="thread"></div></div>
+      <div class="composer" id="composer">
+        <div class="ctx-row"><span>Attach</span>
+          <button class="toggle" id="ctx-code" aria-pressed="true">Current code <small id="ctx-code-n"></small></button>
+          <button class="toggle" id="ctx-tests" aria-pressed="false">Last test run <small id="ctx-tests-n"></small></button>
+          <button class="toggle" id="ctx-hist" aria-pressed="true">History <small id="ctx-hist-n"></small></button>
+        </div>
+        <textarea id="prompt" placeholder="Ask the assistant. Enter to send, Shift + Enter for a new line."></textarea>
+        <div class="composer-foot">
+          <div class="cost" id="cost"></div>
+          <button class="btn btn-sm" id="btn-stop" hidden>Stop</button>
+          <button class="btn btn-primary btn-sm" id="btn-send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="mobile-tabs" role="tablist" aria-label="Panels">
+    <button role="tab" data-mtab="pane-brief" aria-selected="false">Problem</button>
+    <button role="tab" data-mtab="pane-editor" aria-selected="true">Code</button>
+    <button role="tab" data-mtab="pane-agent" aria-selected="false">Assistant</button>
+  </nav>
+</section>
+
+<!-- Evaluating -->
+<section id="view-eval" class="view" hidden>
+  <div class="eval-wrap">
+    <div class="eval-card">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise</div>
+      <h2>Submitted. Scoring your session.</h2>
+      <div class="eval-steps" id="eval-steps"></div>
+      <p class="hint" id="eval-note">The written assessment usually takes 20 to 60 seconds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Report -->
+<section id="view-report" class="view" hidden>
+  <header class="lobby-top">
+    <div class="inner">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Scorecard</small></div>
+      <div class="spacer"></div>
+      <button class="btn btn-sm" id="btn-back-lobby">All problems</button>
+    </div>
+  </header>
+  <div class="report-wrap" id="report"></div>
+</section>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script>
+// Problem bank. Each test's `src` runs after the candidate's code and returns [actual, expected].
+const PROBLEMS = [
+  {
+    id: 'rate-limiter',
+    title: 'Sliding-window rate limiter',
+    team: 'API Platform',
+    difficulty: 'Medium',
+    minutes: 40,
+    focus: ['Data structures', 'Design'],
+    scenario: 'Partners are hammering the public Orders API during flash sales. You own the gateway that decides, per API key, whether a request goes through.',
+    body: `
+<p>Implement <code>RateLimiter</code>. A client may make at most <code>limit</code> successful requests in any rolling window of <code>windowMs</code> milliseconds.</p>
+<ul>
+<li><code>allow(clientId, timestamp)</code> returns <code>true</code> and records the request if the client has fewer than <code>limit</code> allowed requests with timestamps in <code>(timestamp - windowMs, timestamp]</code>. Otherwise it returns <code>false</code>. Rejected requests do not count against the client.</li>
+<li><code>retryAfter(clientId, timestamp)</code> returns how many milliseconds the client must wait before a request would be allowed, or <code>0</code> if one would be allowed now.</li>
+</ul>
+<p>Timestamps for a single client never decrease. Clients are independent.</p>`,
+    examples: `const rl = new RateLimiter(3, 1000);
+rl.allow("key_A", 0);     // true
+rl.allow("key_A", 100);   // true
+rl.allow("key_A", 200);   // true
+rl.allow("key_A", 300);   // false, 3 requests in (−700, 300]
+rl.retryAfter("key_A", 300); // 700, the request at 0 ages out at 1000
+rl.allow("key_A", 1000);  // true`,
+    constraints: ['1 ≤ limit ≤ 10⁴', '1 ≤ windowMs ≤ 10⁷', 'Up to 2 × 10⁵ calls per test', 'Each call should be amortized O(1)'],
+    starter: `class RateLimiter {
+  /**
+   * @param {number} limit     max allowed requests per window
+   * @param {number} windowMs  window length in milliseconds
+   */
+  constructor(limit, windowMs) {
+    // TODO
+  }
+
+  /** @returns {boolean} */
+  allow(clientId, timestamp) {
+    // TODO
+  }
+
+  /** @returns {number} ms until a request would be allowed */
+  retryAfter(clientId, timestamp) {
+    // TODO
+  }
+}
+`,
+    tests: [
+      { name: 'Allows up to the limit, then rejects', src: `const r = new RateLimiter(3, 1000);
+return [[0,100,200,300,1000,1001].map(t => r.allow('a', t)), [true,true,true,false,true,false]];` },
+      { name: 'Clients are independent', src: `const r = new RateLimiter(1, 500);
+return [[r.allow('a',0), r.allow('b',0), r.allow('a',10), r.allow('b',499), r.allow('a',500)], [true,true,false,false,true]];` },
+      { name: 'Rejected requests do not count', src: `const r = new RateLimiter(1, 100);
+return [[r.allow('a',0), r.allow('a',50), r.allow('a',99), r.allow('a',100)], [true,false,false,true]];` },
+      { name: 'retryAfter reports the wait', src: `const r = new RateLimiter(2, 1000);
+r.allow('a', 0); r.allow('a', 400);
+return [[r.retryAfter('a', 500), r.retryAfter('a', 1000), r.retryAfter('new', 5)], [500, 0, 0]];` },
+    ],
+    hidden: [
+      { name: 'Window boundary is exclusive of the old edge', src: `const r = new RateLimiter(2, 10);
+return [[r.allow('a',0), r.allow('a',9), r.allow('a',10), r.allow('a',18), r.allow('a',19), r.allow('a',20)], [true,true,true,false,true,true]];` },
+      { name: 'retryAfter after the window slides', src: `const r = new RateLimiter(2, 100);
+r.allow('a', 0); r.allow('a', 30); r.allow('a', 100);
+return [[r.retryAfter('a', 101), r.retryAfter('a', 130)], [29, 0]];` },
+      { name: 'Heavy single-client traffic (200k calls)', src: `const r = new RateLimiter(100, 1000);
+let c = 0; for (let i = 0; i < 200000; i++) if (r.allow('hot', i * 5)) c++;
+return [c, 100000];` },
+      { name: 'Many clients (30k calls)', src: `const r = new RateLimiter(2, 50);
+let c = 0; for (let i = 0; i < 10000; i++) for (let j = 0; j < 3; j++) if (r.allow('k' + i, j)) c++;
+return [c, 20000];` },
+    ],
+    followUps: ['How would this work across 20 gateway nodes sharing one limit?', 'Memory grows with idle clients. How do you evict them?', 'Switch to a token bucket. What changes for bursty partners?'],
+    rubric: 'Strong: per-client queue/deque of allowed timestamps, evict from the front (amortized O(1)); handles exclusive old edge (t - windowMs drops out); rejected requests not stored; retryAfter = oldest + windowMs - t. Weak: filtering the whole array each call (O(limit)), counting rejected requests, off-by-one at the window edge.',
+    offline: {
+      approach: 'Keep a queue of **allowed** timestamps per client (a `Map` from client id to array). On each call, drop timestamps `<= timestamp - windowMs` from the front, then compare the queue length with `limit`.',
+      hints: ['Only successful requests go into the queue; a rejected call should leave state untouched.', 'The oldest kept timestamp decides `retryAfter`: it ages out at `oldest + windowMs`.', 'Watch the edge: a request exactly `windowMs` old is outside the window, so evict with `<=`.', '`Array.prototype.shift()` is fine at this size, but a head index avoids O(n) shifts on long queues.'],
+      edge: ['A request exactly `windowMs` after the oldest one (should be allowed).', 'Several rejected calls in a row (must not extend the block).', '`retryAfter` for a client never seen before (should be `0`).', 'Two clients interleaved at the same timestamps.'],
+      complexity: 'With a per-client queue each timestamp is pushed once and evicted once, so `allow` is amortized **O(1)** and memory is **O(limit)** per active client. Filtering the full history on every call is O(limit) per call.',
+      skeleton: `class RateLimiter {
+  constructor(limit, windowMs) {
+    this.limit = limit;
+    this.windowMs = windowMs;
+    this.hits = new Map(); // clientId -> allowed timestamps, oldest first
+  }
+
+  _window(clientId, timestamp) {
+    let q = this.hits.get(clientId);
+    if (!q) { q = []; this.hits.set(clientId, q); }
+    // TODO: drop timestamps that are outside (timestamp - windowMs, timestamp]
+    return q;
+  }
+
+  allow(clientId, timestamp) {
+    const q = this._window(clientId, timestamp);
+    // TODO: record and return true when under the limit
+  }
+
+  retryAfter(clientId, timestamp) {
+    const q = this._window(clientId, timestamp);
+    // TODO: 0 when under the limit, otherwise when the oldest ages out
+  }
+}`,
+    },
+  },
+  {
+    id: 'ttl-cache',
+    title: 'LRU cache with expiry',
+    team: 'Edge Caching',
+    difficulty: 'Hard',
+    minutes: 45,
+    focus: ['Data structures', 'Edge cases'],
+    scenario: 'The product-detail service caches pricing at the edge. Prices expire, and the box has a hard memory cap, so the cache needs both TTLs and LRU eviction.',
+    body: `
+<p>Implement <code>TTLCache</code> with a fixed <code>capacity</code>. Every operation receives the current time <code>now</code> in milliseconds.</p>
+<ul>
+<li><code>put(key, value, ttlMs, now)</code> inserts or updates an entry that expires at <code>now + ttlMs</code>. An entry is expired when <code>now &gt;= expiresAt</code>. Updating a key refreshes its value, expiry and recency.</li>
+<li>When inserting a <strong>new</strong> key into a full cache, first remove every expired entry. If the cache is still full, evict the least recently used entry.</li>
+<li><code>get(key, now)</code> returns the value, or <code>-1</code> when the key is missing or expired. A successful <code>get</code> marks the entry as most recently used.</li>
+<li><code>size(now)</code> returns the number of entries that have not expired.</li>
+</ul>`,
+    examples: `const c = new TTLCache(2);
+c.put("sku-1", 19.99, 50, 0);
+c.put("sku-2", 4.50, 1000, 0);
+c.get("sku-1", 10);          // 19.99 (sku-1 is now most recent)
+c.put("sku-3", 7.25, 1000, 60); // sku-1 expired at 50, so it goes first; sku-2 stays
+c.get("sku-2", 61);          // 4.5`,
+    constraints: ['1 ≤ capacity ≤ 10⁵', 'Up to 10⁵ operations per test', 'get and put should be O(1) when nothing is expired'],
+    starter: `class TTLCache {
+  /** @param {number} capacity */
+  constructor(capacity) {
+    // TODO
+  }
+
+  get(key, now) {
+    // TODO
+  }
+
+  put(key, value, ttlMs, now) {
+    // TODO
+  }
+
+  size(now) {
+    // TODO
+  }
+}
+`,
+    tests: [
+      { name: 'Evicts least recently used', src: `const c = new TTLCache(2);
+c.put('a', 1, 1000, 0); c.put('b', 2, 1000, 0);
+const r = [c.get('a', 1)]; c.put('c', 3, 1000, 2);
+r.push(c.get('b', 3), c.get('a', 3), c.get('c', 3));
+return [r, [1, -1, 1, 3]];` },
+      { name: 'Entries expire at now + ttl', src: `const c = new TTLCache(2);
+c.put('a', 1, 100, 0);
+return [[c.get('a', 99), c.get('a', 100)], [1, -1]];` },
+      { name: 'Expired entries go before LRU eviction', src: `const c = new TTLCache(2);
+c.put('a', 1, 50, 0); c.put('b', 2, 1000, 0);
+const r = [c.get('a', 10)]; c.put('c', 3, 1000, 60);
+r.push(c.get('b', 61), c.get('c', 61), c.get('a', 61));
+return [r, [1, 2, 3, -1]];` },
+      { name: 'size counts live entries', src: `const c = new TTLCache(3);
+c.put('a', 1, 10, 0); c.put('b', 2, 20, 0); c.put('c', 3, 30, 0);
+return [[c.size(0), c.size(15), c.size(30)], [3, 2, 0]];` },
+    ],
+    hidden: [
+      { name: 'Update refreshes value, expiry and recency', src: `const c = new TTLCache(2);
+c.put('a', 1, 100, 0); c.put('b', 2, 1000, 0); c.put('a', 10, 1000, 50); c.put('c', 3, 1000, 60);
+return [[c.get('a', 200), c.get('b', 200), c.get('c', 200)], [10, -1, 3]];` },
+      { name: 'Updating an existing key never evicts', src: `const c = new TTLCache(2);
+c.put('a', 1, 1000, 0); c.put('b', 2, 1000, 0); c.put('b', 5, 1000, 1);
+return [[c.get('a', 2), c.get('b', 2)], [1, 5]];` },
+      { name: 'Expired get does not count as a use', src: `const c = new TTLCache(2);
+c.put('a', 1, 10, 0); c.put('b', 2, 1000, 0); c.get('a', 20); c.put('c', 3, 1000, 21); c.put('d', 4, 1000, 22);
+return [[c.get('b', 23), c.get('c', 23), c.get('d', 23)], [-1, 3, 4]];` },
+      { name: 'Capacity 1', src: `const c = new TTLCache(1);
+c.put('x', 'v1', 100, 0); c.put('y', 'v2', 100, 1);
+return [[c.get('x', 2), c.get('y', 2)], [-1, 'v2']];` },
+      { name: '100k mixed operations', src: `const c = new TTLCache(1000);
+let hits = 0;
+for (let i = 0; i < 100000; i++) { c.put('k' + (i % 3000), i, 5000, i); if (c.get('k' + ((i * 7) % 3000), i) !== -1) hits++; }
+return [hits, 29718];` },
+    ],
+    followUps: ['Your cleanup on insert can be O(n). How would you bound it?', 'How would you add a "stale-while-revalidate" window?', 'What changes if two threads call put at once?'],
+    rubric: 'Strong: Map insertion order (delete + set) or hashmap + doubly linked list for O(1) LRU; expiry checked on read (lazy); purge expired before LRU eviction only when inserting a new key into a full cache; update path refreshes recency without evicting. Weak: arrays with indexOf (O(n)), evicting by LRU before purging expired, counting expired gets as use.',
+    offline: {
+      approach: 'A JavaScript `Map` keeps insertion order, so `delete` then `set` moves a key to the most-recent end and `map.keys().next().value` is the least recently used. Store `{ value, expiresAt }` per key and check expiry lazily on `get`.',
+      hints: ['On `get`, an expired entry should be deleted and return `-1` without touching recency.', 'Only purge expired entries when a **new** key arrives and the cache is full.', 'Updating an existing key: delete it first, then set it, so it never triggers eviction.', 'Deleting from a `Map` while iterating it with `for...of` is safe in JavaScript.'],
+      edge: ['Capacity 1.', 'Re-putting an existing key in a full cache (must not evict anything).', 'An entry read exactly at `expiresAt` (expired).', 'All entries expired when a new key arrives.'],
+      complexity: '`get` and `put` are **O(1)** with a `Map` (or hashmap + doubly linked list). The purge on a full insert is O(n) in the worst case; a min-heap or bucketed expiry wheel bounds that if it matters.',
+      skeleton: `class TTLCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.entries = new Map(); // key -> { value, expiresAt }, least recent first
+  }
+
+  get(key, now) {
+    const e = this.entries.get(key);
+    // TODO: missing or expired -> -1; otherwise move to most recent
+  }
+
+  put(key, value, ttlMs, now) {
+    // TODO: update path vs new-key path (purge expired, then evict LRU)
+  }
+
+  size(now) {
+    // TODO
+  }
+}`,
+    },
+  },
+  {
+    id: 'free-slots',
+    title: 'Find common free time',
+    team: 'Calendar',
+    difficulty: 'Medium',
+    minutes: 35,
+    focus: ['Intervals', 'Parsing'],
+    scenario: 'The "Find a time" button in the team calendar suggests meeting slots. Product wants every gap where all attendees are free for at least the requested length.',
+    body: `
+<p>Write <code>findFreeSlots(calendars, workday, durationMin)</code>.</p>
+<ul>
+<li><code>calendars</code> is one array per attendee of busy intervals <code>["HH:MM", "HH:MM"]</code>. Intervals can be unsorted, overlap, or fall partly outside the workday.</li>
+<li><code>workday</code> is <code>["HH:MM", "HH:MM"]</code>. Only time inside it counts.</li>
+<li>Return every maximal interval when <strong>all</strong> attendees are free and that lasts at least <code>durationMin</code> minutes, in order, formatted <code>"HH:MM"</code>.</li>
+</ul>
+<p>Back-to-back meetings (one ends at 14:30, the next starts at 14:30) leave no gap.</p>`,
+    examples: `findFreeSlots(
+  [
+    [["09:00","10:30"], ["12:00","13:00"], ["16:00","18:00"]],
+    [["10:00","11:30"], ["12:30","14:30"], ["14:30","15:00"]],
+  ],
+  ["09:00","17:00"],
+  30
+);
+// [["11:30","12:00"], ["15:00","16:00"]]`,
+    constraints: ['Up to 50 attendees with 200 meetings each', 'Times are on one day, 00:00–23:59', '1 ≤ durationMin ≤ 480'],
+    starter: `/**
+ * @param {string[][][]} calendars  busy intervals per attendee
+ * @param {string[]} workday        ["HH:MM", "HH:MM"]
+ * @param {number} durationMin
+ * @returns {string[][]}            free intervals
+ */
+function findFreeSlots(calendars, workday, durationMin) {
+  // TODO
+}
+`,
+    tests: [
+      { name: 'Example from the spec', src: `return [findFreeSlots([[['09:00','10:30'],['12:00','13:00'],['16:00','18:00']],[['10:00','11:30'],['12:30','14:30'],['14:30','15:00']]], ['09:00','17:00'], 30), [['11:30','12:00'],['15:00','16:00']]];` },
+      { name: 'Longer meeting filters short gaps', src: `return [findFreeSlots([[['09:00','10:30'],['12:00','13:00'],['16:00','18:00']],[['10:00','11:30'],['12:30','14:30'],['14:30','15:00']]], ['09:00','17:00'], 45), [['15:00','16:00']]];` },
+      { name: 'Nobody busy', src: `return [findFreeSlots([[], []], ['09:00','17:00'], 60), [['09:00','17:00']]];` },
+      { name: 'Meeting that starts before the workday', src: `return [findFreeSlots([[['07:00','09:30']]], ['09:00','17:00'], 60), [['09:30','17:00']]];` },
+    ],
+    hidden: [
+      { name: 'Unsorted, nested and overlapping', src: `return [findFreeSlots([[['13:00','14:00'],['09:00','12:00']],[['10:00','11:00'],['11:30','13:30']]], ['09:00','17:00'], 15), [['14:00','17:00']]];` },
+      { name: 'Fully booked day', src: `return [findFreeSlots([[['08:00','12:00']],[['11:00','18:00']]], ['09:00','17:00'], 5), []];` },
+      { name: 'Gap exactly the requested length', src: `return [findFreeSlots([[['09:00','09:30'],['10:00','17:00']]], ['09:00','17:00'], 30), [['09:30','10:00']]];` },
+      { name: 'Meetings entirely outside the workday', src: `return [findFreeSlots([[['06:00','07:00'],['18:00','19:00']]], ['08:00','10:00'], 120), [['08:00','10:00']]];` },
+      { name: '50 attendees, random calendars', src: `let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const pad = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const cals = [];
+for (let p = 0; p < 50; p++) { const c = []; for (let k = 0; k < 4; k++) { const s = 480 + Math.floor(rnd() * 600); c.push([pad(s), pad(Math.min(s + 5 + Math.floor(rnd() * 40), 1439))]); } cals.push(c); }
+const busy = new Array(1440).fill(false);
+for (const c of cals) for (const [a, b] of c) { const s = +a.slice(0, 2) * 60 + +a.slice(3), e = +b.slice(0, 2) * 60 + +b.slice(3); for (let m = s; m < e; m++) busy[m] = true; }
+const want = []; let m = 540;
+while (m < 1080) { if (busy[m]) { m++; continue; } let e = m; while (e < 1080 && !busy[e]) e++; if (e - m >= 20) want.push([pad(m), pad(e)]); m = e; }
+return [findFreeSlots(cals, ['09:00', '18:00'], 20), want];` },
+    ],
+    followUps: ['Attendees are in different time zones. What changes?', 'Rank the slots: prefer ones that do not fragment anyone’s afternoon.', 'Some attendees are optional. How do you return "best" slots?'],
+    rubric: 'Strong: convert to minutes, clip to workday, flatten + sort by start, sweep with a running max end, emit gaps >= duration, format with zero padding. O(n log n). Weak: minute-by-minute arrays without noting cost, string comparison bugs, missing clip, treating back-to-back as a gap, forgetting the gap at the end of the day.',
+    offline: {
+      approach: 'Convert every time to minutes since midnight, clip each busy interval to the workday, flatten all attendees into one list, sort by start, then sweep with a cursor that tracks the latest busy end. Any gap between the cursor and the next start that is at least `durationMin` is a free slot.',
+      hints: ['Flattening all calendars is fine: you only care when *anyone* is busy.', 'Clip with `Math.max(start, dayStart)` and `Math.min(end, dayEnd)`, then drop intervals that became empty.', 'Advance the cursor with `Math.max(cursor, end)` so nested meetings do not move it backwards.', 'Don’t forget the gap between the last meeting and the end of the workday.'],
+      edge: ['No meetings at all.', 'A gap of exactly `durationMin`.', 'A meeting nested inside another one.', 'Meetings that start before or end after the workday.'],
+      complexity: 'Sorting dominates: **O(n log n)** for n busy intervals across all attendees, O(n) extra space. A minute-array works because a day has 1,440 minutes, but it ties the solution to minute granularity.',
+      skeleton: `function findFreeSlots(calendars, workday, durationMin) {
+  const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  const toTime = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+  const dayStart = toMin(workday[0]), dayEnd = toMin(workday[1]);
+
+  const busy = calendars.flat()
+    .map(([a, b]) => [Math.max(toMin(a), dayStart), Math.min(toMin(b), dayEnd)])
+    .filter(([a, b]) => a < b)
+    .sort((x, y) => x[0] - y[0]);
+
+  const free = [];
+  let cursor = dayStart;
+  // TODO: sweep busy intervals, push gaps >= durationMin
+  return free;
+}`,
+    },
+  },
+  {
+    id: 'reconcile',
+    title: 'Fix the payment reconciliation job',
+    team: 'Finance Engineering',
+    difficulty: 'Medium',
+    minutes: 30,
+    focus: ['Debugging', 'Money handling'],
+    scenario: 'Last night’s finance report flagged 312 orders as unpaid that customers had paid. The job was written in a hurry. Find and fix every bug in the code you were handed.',
+    body: `
+<p>The editor already contains <code>reconcile(orders, payments)</code>. It runs, but it gets several cases wrong. Fix it so it meets this spec:</p>
+<ul>
+<li>An order can be paid in several parts, and a refund is a payment with a negative amount.</li>
+<li>Order ids are case-insensitive: <code>"ord-7"</code> pays <code>"ORD-7"</code>.</li>
+<li>Amounts are dollars. Totals that differ by less than half a cent are equal.</li>
+<li>Return <code>{ paid, unpaid, overpaid, unmatchedPayments }</code>. The first three list order ids exactly as written in <code>orders</code>. <code>unmatchedPayments</code> lists uppercase order ids that have payments but no order, without duplicates.</li>
+<li>Every list is sorted ascending.</li>
+</ul>`,
+    examples: `reconcile(
+  [{ id: "ORD-1", total: 59.97 }, { id: "ORD-2", total: 15 }],
+  [
+    { orderId: "ORD-1", amount: 19.99 },
+    { orderId: "ord-1", amount: 19.99 },
+    { orderId: "ORD-1", amount: 19.99 },
+    { orderId: "ORD-9", amount: 3 },
+  ]
+);
+// { paid: ["ORD-1"], unpaid: ["ORD-2"], overpaid: [], unmatchedPayments: ["ORD-9"] }`,
+    constraints: ['Up to 10⁵ orders and 3 × 10⁵ payments', 'Amounts have at most 2 decimal places', 'Should run in O(n log n)'],
+    starter: `// Nightly job: match payments to orders for the finance report.
+// orders:   [{ id: "ORD-1001", total: 59.97 }]
+// payments: [{ orderId: "ord-1001", amount: 19.99 }]  (orders can be paid in parts)
+function reconcile(orders, payments) {
+  const totals = {};
+  for (const p of payments) {
+    totals[p.orderId] = p.amount;
+  }
+
+  const result = { paid: [], unpaid: [], overpaid: [], unmatchedPayments: [] };
+  for (const o of orders) {
+    const received = totals[o.id];
+    if (received === o.total) result.paid.push(o.id);
+    else if (received > o.total) result.overpaid.push(o.id);
+    else result.unpaid.push(o.id);
+  }
+
+  for (const id in totals) {
+    if (!orders.find(o => o.id === id)) result.unmatchedPayments.push(id);
+  }
+  return result;
+}
+`,
+    tests: [
+      { name: 'Split payments add up', src: `return [reconcile([{id:'ORD-1',total:59.97}], [{orderId:'ORD-1',amount:19.99},{orderId:'ORD-1',amount:19.99},{orderId:'ORD-1',amount:19.99}]), {paid:['ORD-1'],unpaid:[],overpaid:[],unmatchedPayments:[]}];` },
+      { name: 'Ids are case-insensitive', src: `return [reconcile([{id:'ORD-7',total:10}], [{orderId:'ord-7',amount:10}]), {paid:['ORD-7'],unpaid:[],overpaid:[],unmatchedPayments:[]}];` },
+      { name: 'Overpaid, partly paid and unpaid', src: `return [reconcile([{id:'A',total:20},{id:'B',total:15},{id:'C',total:5}], [{orderId:'A',amount:25},{orderId:'B',amount:10}]), {paid:[],unpaid:['B','C'],overpaid:['A'],unmatchedPayments:[]}];` },
+      { name: 'Payments without an order', src: `return [reconcile([], [{orderId:'ord-9',amount:3},{orderId:'ORD-9',amount:1}]), {paid:[],unpaid:[],overpaid:[],unmatchedPayments:['ORD-9']}];` },
+    ],
+    hidden: [
+      { name: 'Refunds reduce the total', src: `return [reconcile([{id:'D',total:30}], [{orderId:'D',amount:40},{orderId:'D',amount:-10}]), {paid:['D'],unpaid:[],overpaid:[],unmatchedPayments:[]}];` },
+      { name: 'Every list is sorted', src: `return [reconcile([{id:'ORD-3',total:1},{id:'ORD-1',total:1},{id:'ORD-2',total:1}], [{orderId:'ord-3',amount:1},{orderId:'ord-1',amount:1},{orderId:'ord-2',amount:1},{orderId:'z-1',amount:1},{orderId:'b-1',amount:1}]), {paid:['ORD-1','ORD-2','ORD-3'],unpaid:[],overpaid:[],unmatchedPayments:['B-1','Z-1']}];` },
+      { name: 'Float drift across many small payments', src: `const pays = []; for (let i = 0; i < 10; i++) pays.push({orderId:'X', amount:0.1});
+return [reconcile([{id:'X',total:1}], pays).paid, ['X']];` },
+      { name: 'Ids keep their original spelling in the output', src: `return [reconcile([{id:'ord-55',total:2}], [{orderId:'ORD-55',amount:2}]).paid, ['ord-55']];` },
+      { name: '100k orders, 300k payments', src: `const orders = [], pays = [];
+for (let i = 0; i < 100000; i++) { orders.push({id:'O-' + i, total: 30}); for (let j = 0; j < 3; j++) pays.push({orderId:'o-' + i, amount: i % 10 === 0 ? 9.99 : 10}); }
+const r = reconcile(orders, pays);
+return [[r.paid.length, r.unpaid.length, r.overpaid.length, r.unmatchedPayments.length], [90000, 10000, 0, 0]];` },
+    ],
+    followUps: ['Finance wants currency support. How do you avoid floats entirely?', 'The job reads 40 GB of payments. How do you stream it?', 'How would you test this so the bug never returns?'],
+    rubric: 'Bugs: (1) overwrites instead of summing; (2) case-sensitive ids in both loops; (3) float equality on money; (4) undefined received for unpaid orders (works by accident); (5) O(n*m) orders.find; (6) unsorted output; (7) unmatched ids not uppercased/deduped. Strong: integer cents via Math.round(x*100), normalized keys, Set of order ids, sort at end, keeps original id spelling. Weak: tolerance hacks without reasoning, fixing only visible tests.',
+    offline: {
+      approach: 'Read the code against the spec line by line. The first loop overwrites instead of summing, every id comparison is case-sensitive, money is compared with `===` on floats, `orders.find` inside a loop is O(n·m), and nothing is sorted.',
+      hints: ['Sum into a `Map` keyed by `orderId.toUpperCase()`.', 'Work in integer cents: `Math.round(amount * 100)` makes 0.1 × 10 equal 1.00.', 'Build a `Set` of normalized order ids once, instead of `orders.find` per payment.', 'Sort each list at the end, and keep the original order id spelling for paid/unpaid/overpaid.'],
+      edge: ['Ten payments of `0.10` against a total of `1.00`.', 'A refund (negative amount) that brings an overpaid order back to paid.', 'An order whose id is lowercase in `orders` but uppercase in payments.', 'Two payments for the same unknown order id with different casing.'],
+      complexity: 'One pass over payments, one over orders, then sorting: **O((n + m) log n)**. The original `orders.find` per key is **O(n · m)**, which times out at 10⁵ orders.',
+      skeleton: `function reconcile(orders, payments) {
+  const cents = x => Math.round(x * 100);
+  const received = new Map(); // ORDER-ID -> cents
+  for (const p of payments) {
+    const key = p.orderId.toUpperCase();
+    received.set(key, (received.get(key) || 0) + cents(p.amount));
+  }
+
+  const result = { paid: [], unpaid: [], overpaid: [], unmatchedPayments: [] };
+  const known = new Set();
+  for (const o of orders) {
+    // TODO: compare cents(o.total) with received, keep o.id spelling
+  }
+  // TODO: unmatched payments, then sort every list
+  return result;
+}`,
+    },
+  },
+  {
+    id: 'install-order',
+    title: 'Package install order',
+    team: 'Developer Tools',
+    difficulty: 'Medium',
+    minutes: 35,
+    focus: ['Graphs', 'Determinism'],
+    scenario: 'The internal package manager installs dependencies in parallel today, and builds are flaky. You are making installs sequential and reproducible.',
+    body: `
+<p>Write <code>installOrder(packages)</code>. <code>packages</code> maps a package name to the names it depends on.</p>
+<ul>
+<li>Return every package in an order where each package comes after all of its dependencies.</li>
+<li>A dependency that is not a key in <code>packages</code> is a package with no dependencies, and it is installed too.</li>
+<li>When several packages are ready at once, install the alphabetically smallest first, so the order is deterministic.</li>
+<li>Duplicate dependencies count once. If the graph has a cycle, throw an <code>Error</code> whose message starts with <code>"Cycle detected"</code>.</li>
+</ul>`,
+    examples: `installOrder({
+  app:  ["web", "db"],
+  web:  ["http"],
+  db:   [],
+  http: [],
+});
+// ["db", "http", "web", "app"]
+
+installOrder({ a: ["b"], b: ["a"] });
+// throws Error("Cycle detected: a -> b -> a")`,
+    constraints: ['Up to 2 × 10⁴ packages and 10⁵ edges', 'Names are lowercase ASCII', 'Should run in O((V + E) log V)'],
+    starter: `/**
+ * @param {Record<string, string[]>} packages
+ * @returns {string[]} install order
+ */
+function installOrder(packages) {
+  // TODO
+}
+`,
+    tests: [
+      { name: 'Example graph', src: `return [installOrder({app:['web','db'], web:['http'], db:[], http:[]}), ['db','http','web','app']];` },
+      { name: 'Implicit leaf packages are installed', src: `return [installOrder({cli:['parser','color']}), ['color','parser','cli']];` },
+      { name: 'Alphabetical tie-break', src: `return [installOrder({c:[], b:[], a:[]}), ['a','b','c']];` },
+      { name: 'Cycle throws', src: `try { installOrder({a:['b'], b:['c'], c:['a']}); return ['no error thrown', 'Error starting with "Cycle detected"']; }
+catch (e) { return [String(e && e.message).startsWith('Cycle detected') ? 'Error starting with "Cycle detected"' : 'Error: ' + (e && e.message), 'Error starting with "Cycle detected"']; }` },
+    ],
+    hidden: [
+      { name: 'Self-dependency is a cycle', src: `try { installOrder({a:['a']}); return ['no error thrown', 'Cycle error']; }
+catch (e) { return [String(e && e.message).startsWith('Cycle detected') ? 'Cycle error' : 'Error: ' + (e && e.message), 'Cycle error']; }` },
+      { name: 'Duplicate dependencies count once', src: `return [installOrder({x:['y','y'], y:[]}), ['y','x']];` },
+      { name: 'Ready set re-sorts as packages unlock', src: `return [installOrder({b:['z'], a:['z'], y:[], z:[]}), ['y','z','a','b']];` },
+      { name: 'Cycle deep in a larger graph', src: `try { installOrder({a:['b'], b:['c'], c:[], d:['e'], e:['f'], f:['d']}); return ['no error thrown', 'Cycle error']; }
+catch (e) { return [String(e && e.message).startsWith('Cycle detected') ? 'Cycle error' : 'Error: ' + (e && e.message), 'Cycle error']; }` },
+      { name: 'Chain of 20k packages', src: `const g = {}; for (let i = 1; i < 20000; i++) g['p' + String(i).padStart(5, '0')] = ['p' + String(i - 1).padStart(5, '0')];
+const out = installOrder(g);
+return [[out.length, out[0], out[19999]], [20000, 'p00000', 'p19999']];` },
+    ],
+    followUps: ['Install in parallel batches instead. What is the minimum number of rounds?', 'Report the actual cycle path in the error.', 'Two versions of the same package are requested. What do you do?'],
+    rubric: "Strong: collect all names including implicit leaves, dedupe edges, Kahn's algorithm with a min-heap or sorted ready list, count emitted vs total to detect cycles (including self loops). Weak: DFS order that ignores the tie-break, missing implicit leaves, infinite loop on cycles, re-sorting an O(V) array per pop on large inputs without noting it.",
+    offline: {
+      approach: "Use Kahn's algorithm. Collect every name (keys and dependencies), count each package's unique dependencies (in-degree), keep a ready set of packages with in-degree 0, and always take the alphabetically smallest ready package. If you emit fewer packages than exist, there is a cycle.",
+      hints: ['Build a reverse map: dependency -> packages that need it, so you can decrement in-degrees.', 'Dedupe with `new Set(deps)` before counting in-degrees.', 'A sorted array works for the ready set; a small binary heap avoids re-sorting on large graphs.', 'Cycle check: `if (order.length !== allNames.size) throw new Error("Cycle detected")`.'],
+      edge: ['A package that depends on itself.', 'Dependencies that are never declared as keys.', 'Two packages that become ready at the same time, out of alphabetical order.', 'A cycle that does not include the first package.'],
+      complexity: "Kahn's algorithm is **O(V + E)** plus the cost of choosing the smallest ready package: **O(log V)** per pop with a heap, so **O((V + E) log V)** overall.",
+      skeleton: `function installOrder(packages) {
+  const names = new Set(Object.keys(packages));
+  for (const deps of Object.values(packages)) deps.forEach(d => names.add(d));
+
+  const indegree = new Map([...names].map(n => [n, 0]));
+  const dependents = new Map([...names].map(n => [n, []]));
+  for (const [pkg, deps] of Object.entries(packages)) {
+    for (const d of new Set(deps)) {
+      // TODO: count the edge d -> pkg
+    }
+  }
+
+  const ready = [...names].filter(n => indegree.get(n) === 0).sort();
+  const order = [];
+  // TODO: Kahn's loop, smallest ready first
+  // TODO: cycle check
+  return order;
+}`,
+    },
+  },
+  {
+    id: 'slow-endpoints',
+    title: 'Slowest endpoints from access logs',
+    team: 'Observability',
+    difficulty: 'Easy',
+    minutes: 30,
+    focus: ['Parsing', 'Aggregation'],
+    scenario: 'On-call wants a quick report of which endpoints regressed after yesterday’s deploy. All you have is raw gateway access logs.',
+    body: `
+<p>Write <code>slowestEndpoints(lines, k)</code>. Each line looks like:</p>
+<pre class="inline-pre">2026-03-04T10:15:02Z GET /api/orders/8812?expand=items 200 184ms</pre>
+<ul>
+<li>Group by method and normalized path. Normalize by dropping the query string and replacing every path segment made only of digits with <code>:id</code>, giving <code>GET /api/orders/:id</code>.</li>
+<li>For each endpoint, compute the p95 latency with the nearest-rank method: sort ascending and take the value at position <code>ceil(0.95 × n)</code> (1-based).</li>
+<li>Return the top <code>k</code> as <code>{ endpoint, p95, count }</code>, sorted by <code>p95</code> descending, then by <code>endpoint</code> ascending.</li>
+<li>Skip lines that do not match the format.</li>
+</ul>`,
+    examples: `slowestEndpoints([
+  "2026-03-04T10:15:02Z GET /api/orders/1 200 100ms",
+  "2026-03-04T10:15:03Z GET /api/orders/2 200 300ms",
+  "2026-03-04T10:15:03Z GET /api/users 200 50ms",
+  "2026-03-04T10:15:04Z POST /api/orders 201 400ms",
+], 2);
+// [ { endpoint: "POST /api/orders", p95: 400, count: 1 },
+//   { endpoint: "GET /api/orders/:id", p95: 300, count: 2 } ]`,
+    constraints: ['Up to 5 × 10⁵ lines', 'Latencies are integers in ms', '1 ≤ k ≤ 1,000'],
+    starter: `/**
+ * @param {string[]} lines  raw access-log lines
+ * @param {number} k
+ * @returns {{endpoint: string, p95: number, count: number}[]}
+ */
+function slowestEndpoints(lines, k) {
+  // TODO
+}
+`,
+    tests: [
+      { name: 'Example from the spec', src: `return [slowestEndpoints(['2026-03-04T10:15:02Z GET /api/orders/1 200 100ms','2026-03-04T10:15:03Z GET /api/orders/2 200 300ms','2026-03-04T10:15:03Z GET /api/users 200 50ms','2026-03-04T10:15:04Z POST /api/orders 201 400ms'], 2), [{endpoint:'POST /api/orders',p95:400,count:1},{endpoint:'GET /api/orders/:id',p95:300,count:2}]];` },
+      { name: 'Nearest-rank p95 over 20 samples', src: `const lines = []; for (let i = 1; i <= 20; i++) lines.push('t GET /health 200 ' + i + 'ms');
+return [slowestEndpoints(lines, 1), [{endpoint:'GET /health',p95:19,count:20}]];` },
+      { name: 'Query strings are dropped', src: `return [slowestEndpoints(['t GET /search?q=shoes 200 80ms','t GET /search?q=hats 200 90ms'], 5), [{endpoint:'GET /search',p95:90,count:2}]];` },
+      { name: 'Malformed lines are skipped', src: `return [slowestEndpoints(['garbage','t GET /a 200 abcms','t GET /a 200 12ms',''], 5), [{endpoint:'GET /a',p95:12,count:1}]];` },
+    ],
+    hidden: [
+      { name: 'Ties sort by endpoint', src: `return [slowestEndpoints(['t GET /b 200 10ms','t GET /a 200 10ms','t DELETE /c 204 10ms'], 3).map(r => r.endpoint), ['DELETE /c','GET /a','GET /b']];` },
+      { name: 'Several numeric segments', src: `return [slowestEndpoints(['t GET /v2/users/42/orders/7 200 5ms','t GET /v2/users/9/orders/123 200 9ms'], 1), [{endpoint:'GET /v2/users/:id/orders/:id',p95:9,count:2}]];` },
+      { name: 'k larger than the endpoint count', src: `return [slowestEndpoints(['t GET /x 200 1ms'], 10).length, 1];` },
+      { name: 'Mixed segments keep their text', src: `return [slowestEndpoints(['t GET /files/v2/7a 200 3ms','t GET /files/v2/77 200 4ms'], 5).map(r => r.endpoint).sort(), ['GET /files/v2/7a','GET /files/v2/:id']];` },
+      { name: '500k lines', src: `const lines = []; for (let i = 0; i < 500000; i++) lines.push('2026-03-04T10:00:00Z GET /api/items/' + i + ' 200 ' + (i % 1000) + 'ms');
+const r = slowestEndpoints(lines, 1);
+return [r, [{endpoint:'GET /api/items/:id',p95:949,count:500000}]];` },
+    ],
+    followUps: ['The file is 80 GB. How do you compute p95 without holding every sample?', 'How would you flag regressions compared with last week?', 'Paths like /users/me collide with /users/:id. Does that matter?'],
+    rubric: 'Strong: strict regex or split with validation, strip query, digit-only segment check, group in a Map, numeric sort (not default string sort), nearest-rank index ceil(0.95n)-1, stable tiebreak with localeCompare or < comparison, slice k. Weak: default .sort() on numbers, off-by-one p95, normalizing mixed segments like 7a, crashing on malformed lines.',
+    offline: {
+      approach: 'Parse each line with one regex, normalize the path, push the latency into a `Map` keyed by `"METHOD /path"`, then sort each sample list numerically, take index `Math.ceil(0.95 * n) - 1`, sort the results and slice `k`.',
+      hints: ['A regex like `/^\\S+\\s+([A-Z]+)\\s+(\\S+)\\s+(\\d{3})\\s+(\\d+)ms$/` both parses and rejects malformed lines.', 'Strip the query with `path.split("?")[0]`, then map segments with `/^\\d+$/.test(seg) ? ":id" : seg`.', 'Use `sort((a, b) => a - b)`. The default sort compares numbers as strings.', 'Tie-break with `a.endpoint < b.endpoint ? -1 : 1` after comparing p95.'],
+      edge: ['A segment like `7a` (not all digits, keep it).', 'Exactly 20 samples: p95 is the 19th value.', 'Blank or truncated lines.', '`k` larger than the number of endpoints.'],
+      complexity: 'Parsing is **O(L)** for L lines; sorting samples is **O(L log L)** in total. For streaming data you would swap exact samples for a t-digest or HDR histogram.',
+      skeleton: `function slowestEndpoints(lines, k) {
+  const LINE = /^\\S+\\s+([A-Z]+)\\s+(\\S+)\\s+(\\d{3})\\s+(\\d+)ms$/;
+  const samples = new Map(); // "GET /api/orders/:id" -> [ms, ...]
+
+  for (const line of lines) {
+    const m = LINE.exec(line.trim());
+    if (!m) continue;
+    // TODO: normalize m[2], push Number(m[4])
+  }
+
+  const rows = [];
+  // TODO: p95 per endpoint (nearest rank), sort, slice k
+  return rows;
+}`,
+    },
+  },
+];
+
+if (typeof module !== 'undefined') module.exports = PROBLEMS;
+</script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Utilities ----------
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const est = s => Math.ceil(String(s || '').length / 4);
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+  const kfmt = n => n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 1 : 0).replace(/\.0$/, '') + 'k' : String(n);
+  const pl = (n, w, p) => n + ' ' + (n === 1 ? w : (p || w + 's'));
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const FENCE = '```';
+  const mmss = ms => { const s = Math.max(0, Math.round(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (_) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* storage unavailable */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (_) { /* storage unavailable */ } },
+  };
+  const uid = () => Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+  const stripHtml = h => h.replace(/<li>/g, '\n- ').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/\n{3,}/g, '\n\n').trim();
+
+  const K_ACTIVE = 'pairwise.active.v1';
+  const K_HISTORY = 'pairwise.history.v1';
+  const K_PREFS = 'pairwise.prefs.v1';
+
+  const BUDGETS = [
+    { v: 5000, label: '5k', note: 'Tight' },
+    { v: 10000, label: '10k', note: 'Standard' },
+    { v: 20000, label: '20k', note: 'Roomy' },
+    { v: 40000, label: '40k', note: 'Open' },
+  ];
+  const DURATIONS = [{ v: 30, label: '30 min' }, { v: 45, label: '45 min' }, { v: 60, label: '60 min' }];
+  const TIERS = [
+    { v: 'quick', label: 'Fast', note: 'Instant replies' },
+    { v: 'default', label: 'Balanced', note: 'Recommended' },
+    { v: 'complex', label: 'Deep', note: 'Slower, thinks longer' },
+  ];
+  const DIMS = [
+    { id: 'correctness', label: 'Correctness', weight: 0.25, desc: 'Visible and hidden tests' },
+    { id: 'problem_solving', label: 'Problem decomposition', weight: 0.15, desc: 'Understanding, planning, approach' },
+    { id: 'ai_collaboration', label: 'Working with the assistant', weight: 0.2, desc: 'Prompt quality, judgment, ownership' },
+    { id: 'verification', label: 'Verification and testing', weight: 0.15, desc: 'Running tests, probing edge cases' },
+    { id: 'code_quality', label: 'Code quality', weight: 0.1, desc: 'Readability, structure, complexity' },
+    { id: 'efficiency', label: 'Token and time management', weight: 0.15, desc: 'Budget and clock use' },
+  ];
+  const VERDICTS = {
+    strong_hire: 'Strong hire', hire: 'Hire', lean_hire: 'Lean hire', lean_no_hire: 'Lean no hire', no_hire: 'No hire',
+  };
+  const SCORE_WORDS = { 1: 'Below bar', 2: 'Mixed', 3: 'Meets bar', 4: 'Exceeds' };
+  const MAX_HISTORY_TURNS = 8;
+  // Outside claude.ai, visitors connect Claude with their own Anthropic API key.
+  const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.133.0/+esm';
+  const K_KEY = 'pairwise.anthropicKey.v1';
+  const BYOK_MODELS = {
+    quick: { model: 'claude-haiku-5-5', effort: 'low', label: 'Haiku 5.5' },
+    default: { model: 'claude-opus-5-5', effort: 'low', label: 'Opus 5.5' },
+    complex: { model: 'claude-opus-5-5', effort: 'high', label: 'Opus 5.5, high effort' },
+  };
+  const hostHasClaude = !!(window.claude && typeof window.claude.use === 'function');
+  const NO_KEY_REASON = 'Claude is not connected, so the built-in practice assistant is answering. Connect your Anthropic API key to use Claude.';
+
+  // ---------- App state ----------
+  const prefs = Object.assign({ problemId: PROBLEMS[0].id, budget: 10000, duration: 45, tier: 'default', name: '' }, store.get(K_PREFS, {}));
+  let sess = null;           // active session
+  let editor = null;         // editor adapter
+  let sample = null;         // Claude sampling function, or null
+  let byok = null;           // { client, Anthropic } when the visitor connected an API key
+  let SDK = null;            // the Anthropic SDK class, once loaded
+  let agentMode = 'checking'; // 'checking' | 'claude' | 'byok' | 'offline'
+  let offlineReason = '';
+  let streaming = null;      // { ctl, turn }
+  let timerHandle = null;
+  let saveHandle = null;
+  const codeStore = new Map();
+
+  const problem = id => PROBLEMS.find(p => p.id === id) || PROBLEMS[0];
+
+  // ---------- Claude capability ----------
+  function initAgent() {
+    const cl = window.claude;
+    if (!cl || typeof cl.use !== 'function') {
+      const k = loadKey();
+      if (!k) { setAgentMode('offline', NO_KEY_REASON); return; }
+      connectKey(k, null).catch(() => setAgentMode('offline', 'Your saved API key could not be used, so the built-in practice assistant is answering. Reconnect it to use Claude.'));
+      return;
+    }
+    cl.use('sample').then(s => {
+      if (s) { sample = s; setAgentMode('claude'); }
+      else setAgentMode('offline', 'Claude is not available in this view, so the built-in practice assistant is answering.');
+    }).catch(() => setAgentMode('offline', 'Claude could not be reached, so the built-in practice assistant is answering.'));
+  }
+  function setAgentMode(mode, reason) {
+    agentMode = mode;
+    if (reason) offlineReason = reason;
+    const lobby = $('#lobby-agent-status');
+    lobby.dataset.mode = mode;
+    lobby.lastElementChild.textContent = mode === 'claude' ? 'Assistant: Claude, connected' : mode === 'byok' ? 'Assistant: Claude via your API key' : mode === 'offline' ? 'Assistant: built-in practice mode' : 'Connecting to the assistant…';
+    lobby.title = mode === 'offline' ? offlineReason : '';
+    const badge = $('#agent-badge');
+    badge.dataset.mode = mode;
+    const tier = TIERS.find(t => t.v === (sess ? sess.tier : prefs.tier));
+    const bm = BYOK_MODELS[sess ? sess.tier : prefs.tier] || BYOK_MODELS.default;
+    $('#agent-badge-text').textContent = mode === 'claude' ? 'Claude · ' + tier.label : mode === 'byok' ? 'Claude · ' + bm.label : mode === 'offline' ? 'Practice mode' : 'Connecting…';
+    badge.title = mode === 'offline' ? offlineReason : mode === 'byok' ? 'Using your Anthropic API key' : '';
+    $('#btn-key-agent').hidden = hostHasClaude || mode === 'byok' || mode === 'checking';
+    renderConn();
+    renderSetupNotes();
+  }
+
+  // ---------- Bring your own API key ----------
+  function loadKey() { try { return sessionStorage.getItem(K_KEY) || localStorage.getItem(K_KEY) || ''; } catch (_) { return ''; } }
+  function saveKey(k, remember) {
+    try { sessionStorage.setItem(K_KEY, k); } catch (_) { /* storage unavailable */ }
+    try { if (remember) localStorage.setItem(K_KEY, k); else localStorage.removeItem(K_KEY); } catch (_) { /* storage unavailable */ }
+  }
+  function clearKey() {
+    try { sessionStorage.removeItem(K_KEY); } catch (_) { /* storage unavailable */ }
+    try { localStorage.removeItem(K_KEY); } catch (_) { /* storage unavailable */ }
+  }
+  async function connectKey(key, remember) {
+    const mod = await import(SDK_URL);
+    const Anthropic = mod.default || mod.Anthropic;
+    SDK = Anthropic;
+    const client = new Anthropic({ apiKey: key, dangerouslyAllowBrowser: true, maxRetries: 1 });
+    // Token counting is free and, unlike the models endpoint, answers a bad key with CORS headers.
+    await client.messages.countTokens({ model: 'claude-haiku-5-5', messages: [{ role: 'user', content: 'ping' }] });
+    byok = { client, Anthropic };
+    if (remember !== null) saveKey(key, remember);
+    setAgentMode('byok');
+  }
+  function disconnectKey() {
+    clearKey(); byok = null;
+    setAgentMode('offline', NO_KEY_REASON);
+    toast('API key removed from this browser');
+  }
+  function renderConn() {
+    const sec = $('#conn-sec');
+    if (!sec) return;
+    sec.hidden = hostHasClaude;
+    if (hostHasClaude) return;
+    const on = agentMode === 'byok';
+    $('#conn-state').textContent = on ? 'Connected' : 'Not connected';
+    $('#btn-key').textContent = on ? 'Change or remove key' : 'Connect your API key';
+    $('#conn-note').textContent = on
+      ? 'Claude answers with your key. Usage is billed to your Anthropic account.'
+      : 'Without a key, a built-in practice assistant answers and a rubric grades you.';
+  }
+  function splitInput(input) {
+    const messages = input.slice(1);
+    while (messages.length && messages[0].role !== 'user') messages.shift();
+    return { system: input[0].content, messages };
+  }
+  function mapApiError(e, text, signal) {
+    if (e && e.code && !(e instanceof Error)) return Object.assign({ text }, e);
+    const A = SDK;
+    let code = 'upstream_error';
+    if ((signal && signal.aborted) || (A && A.APIUserAbortError && e instanceof A.APIUserAbortError)) code = 'cancelled';
+    else if (A && (e instanceof A.AuthenticationError || e instanceof A.PermissionDeniedError)) code = 'bad_key';
+    else if (A && e instanceof A.RateLimitError) code = 'rate_limited';
+    else if (A && e instanceof A.BadRequestError) code = 'bad_request';
+    return { code, message: (e && e.message) || String(e), text };
+  }
+  async function byokStream(params, onText, signal) {
+    if (params.model === 'claude-opus-5-5') { params.betas = ['server-side-fallback-2026-07-01']; params.fallbacks = 'default'; }
+    let text = '';
+    try {
+      const stream = byok.client.beta.messages.stream(params, { signal });
+      stream.on('text', d => { text += d; if (onText) onText({ text }); });
+      const msg = await stream.finalMessage();
+      if (msg.stop_reason === 'refusal') throw { code: 'refused' };
+      return { text, usage: msg.usage };
+    } catch (e) { throw mapApiError(e, text, signal); }
+  }
+  function byokChat(input, tier, onText, signal) {
+    const M = BYOK_MODELS[tier] || BYOK_MODELS.default;
+    const { system, messages } = splitInput(input);
+    return byokStream({ model: M.model, max_tokens: 16000, system, messages, output_config: { effort: M.effort } }, onText, signal);
+  }
+  async function byokJson(prompt) {
+    const r = await byokStream({ model: 'claude-opus-5-5', max_tokens: 16000, messages: [{ role: 'user', content: prompt }], output_config: { effort: 'medium' } }, null, null);
+    return parseJsonLoose(r.text);
+  }
+  function parseJsonLoose(t) {
+    try { return JSON.parse(t); } catch (_) { /* try the fenced or embedded object next */ }
+    const f = t.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (f) { try { return JSON.parse(f[1]); } catch (_) { /* fall through */ } }
+    const a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (_) { /* fall through */ } }
+    throw { code: 'invalid_json', text: t };
+  }
+  function openKeyModal() {
+    const on = agentMode === 'byok';
+    openModal({
+      title: on ? 'Your Claude connection' : 'Connect Claude',
+      sub: 'Use your own Anthropic API key for the assistant and the scorecard.',
+      body: `
+        <label class="setup-label" for="key-input"><span>Anthropic API key</span></label>
+        <input id="key-input" class="field" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+        <label class="check"><input type="checkbox" id="key-remember"> Remember on this device</label>
+        <p class="hint">Create a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>. Usage is billed to your Anthropic account. The key stays in this browser and is sent only to api.anthropic.com. Without “Remember”, it is forgotten when you close the tab.</p>
+        <p class="msg-error" id="key-err" hidden></p>`,
+      actions: [{ label: 'Cancel' }].concat(on ? [{ label: 'Remove key', kind: 'danger', onClick: disconnectKey }] : [], [{ label: 'Connect', kind: 'primary', id: 'key-go', keepOpen: true, onClick: async () => {
+        const key = $('#key-input').value.trim();
+        const err = $('#key-err');
+        if (!key) { err.hidden = false; err.textContent = 'Paste your API key first.'; return; }
+        const go = $('#key-go'); go.disabled = true; go.textContent = 'Checking key…'; err.hidden = true;
+        try {
+          await connectKey(key, $('#key-remember').checked);
+          closeModal(); toast('Connected. Claude will answer with your key.');
+          if (sess) renderThread(); renderCost();
+        } catch (e) {
+          const m = mapApiError(e, '', null);
+          err.hidden = false;
+          err.textContent = m.code === 'bad_key' ? 'That key was rejected. Check that you copied the whole key and that it is active.' : 'Could not reach the Anthropic API: ' + (m.message || 'network error') + '.';
+          go.disabled = false; go.textContent = 'Connect';
+        }
+      } }]),
+      onOpen: () => { const i = $('#key-input'); i.focus(); i.onkeydown = e => { if (e.key === 'Enter') $('#key-go').click(); }; },
+    });
+  }
+  $('#btn-key').onclick = openKeyModal;
+  $('#btn-key-agent').onclick = openKeyModal;
+
+  // ---------- Lobby ----------
+  function renderLobby() {
+    $('#problem-count').textContent = PROBLEMS.length + ' problems';
+    $('#problem-list').innerHTML = PROBLEMS.map(p => `
+      <button class="problem-row" role="radio" aria-checked="${p.id === prefs.problemId}" data-pid="${p.id}">
+        <span class="radio" aria-hidden="true"></span>
+        <span class="pr-main">
+          <span class="pr-title">${esc(p.title)} <span class="pr-team">· ${esc(p.team)}</span></span>
+          <span class="pr-scn">${esc(p.scenario)}</span>
+          <span class="pr-tags">${p.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</span>
+        </span>
+        <span class="pr-side"><span class="chip ${p.difficulty.toLowerCase()}">${p.difficulty}</span><span class="num">~${p.minutes} min</span><span class="num">${p.tests.length} + ${p.hidden.length} tests</span></span>
+      </button>`).join('');
+    renderSeg('#seg-budget', BUDGETS.map(b => ({ v: b.v, html: `${b.label}<small>${b.note}</small>` })), prefs.budget, v => { prefs.budget = v; savePrefs(); renderSetupNotes(); });
+    renderSeg('#seg-time', DURATIONS.map(d => ({ v: d.v, html: d.label })), prefs.duration, v => { prefs.duration = v; savePrefs(); renderSetupNotes(); });
+    renderSeg('#seg-tier', TIERS.map(t => ({ v: t.v, html: t.label })), prefs.tier, v => { prefs.tier = v; savePrefs(); renderSetupNotes(); });
+    $('#cand-name').value = prefs.name || '';
+    renderSetupNotes();
+    renderResume();
+    renderHistory();
+  }
+  function renderSeg(sel, items, current, onPick) {
+    const host = $(sel);
+    host.innerHTML = items.map(it => `<button role="radio" aria-checked="${it.v === current}" data-v="${it.v}">${it.html}</button>`).join('');
+    host.onclick = e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const v = isNaN(+b.dataset.v) ? b.dataset.v : +b.dataset.v;
+      $$('button', host).forEach(x => x.setAttribute('aria-checked', String(x === b)));
+      onPick(v);
+    };
+  }
+  function renderSetupNotes() {
+    const P = problem(prefs.problemId);
+    const per = est(buildPreamble(P)) + est(P.starter) + 380;
+    $('#budget-note').textContent = '≈ ' + Math.max(1, Math.floor(prefs.budget / per)) + ' exchanges with code attached';
+    $('#time-note').textContent = 'Suggested ' + P.minutes + ' min';
+    $('#tier-note').textContent = agentMode === 'byok' ? (BYOK_MODELS[prefs.tier] || BYOK_MODELS.default).label : TIERS.find(t => t.v === prefs.tier).note;
+    $('#start-note').textContent = agentMode === 'offline'
+      ? offlineReason + ' Everything else works the same.'
+      : P.title + ' · ' + kfmt(prefs.budget) + ' tokens · ' + prefs.duration + ' min';
+  }
+  function savePrefs() { store.set(K_PREFS, prefs); }
+
+  function renderResume() {
+    const a = store.get(K_ACTIVE, null);
+    const slot = $('#resume-slot');
+    if (!a || a.status !== 'active') { slot.innerHTML = ''; return; }
+    const P = problem(a.problemId);
+    const left = a.endsAt - Date.now();
+    slot.innerHTML = `<div class="resume-bar"><p><b>Interview in progress:</b> ${esc(P.title)}. ${left > 0 ? mmss(left) + ' left on the clock' : 'Time is up; it will be submitted when you resume'}, ${fmt(a.budget - a.used)} tokens left.</p>
+      <button class="btn btn-sm btn-ghost" id="btn-discard">Discard</button><button class="btn btn-sm btn-primary" id="btn-resume">Resume interview</button></div>`;
+    $('#btn-resume').onclick = () => startSession(a);
+    $('#btn-discard').onclick = () => openModal({
+      title: 'Discard this interview?',
+      sub: 'Your code, notes and assistant conversation for ' + P.title + ' will be deleted. This cannot be undone.',
+      actions: [{ label: 'Keep it' }, { label: 'Discard interview', kind: 'danger', onClick: () => { store.del(K_ACTIVE); renderResume(); toast('Interview discarded'); } }],
+    });
+  }
+
+  function renderHistory() {
+    const h = store.get(K_HISTORY, []);
+    const host = $('#history');
+    if (!h.length) { host.innerHTML = '<p class="history-empty">No sessions yet. Your scorecards will be listed here after you submit.</p>'; return; }
+    host.innerHTML = h.map((r, i) => `
+      <button class="history-row" data-hi="${i}">
+        <span><b>${esc(r.title)}</b><br><span class="faint" style="font-size:12.5px">${new Date(r.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}${r.name ? ' · ' + esc(r.name) : ''}</span></span>
+        <span class="h-hide muted num" style="font-size:13px">${fmt(r.used)} / ${kfmt(r.budget)} tokens · ${r.testsPassed}/${r.testsTotal} tests</span>
+        <span class="num h-hide" style="font-weight:600">${r.overall.toFixed(1)}</span>
+        <span class="verdict v-${r.verdict}">${VERDICTS[r.verdict]}</span>
+      </button>`).join('');
+    host.onclick = e => {
+      const b = e.target.closest('[data-hi]'); if (!b) return;
+      const rec = store.get(K_HISTORY, [])[+b.dataset.hi];
+      if (rec && rec.report) { showReport(rec.report); } else toast('This scorecard is no longer stored in this browser.');
+    };
+  }
+
+  $('#problem-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-pid]'); if (!b) return;
+    prefs.problemId = b.dataset.pid; savePrefs();
+    $$('#problem-list [data-pid]').forEach(x => x.setAttribute('aria-checked', String(x === b)));
+    renderSetupNotes();
+  });
+  $('#cand-name').addEventListener('input', e => { prefs.name = e.target.value.slice(0, 60); savePrefs(); });
+
+  $('#btn-start').onclick = () => {
+    if (store.get(K_ACTIVE, null)) {
+      openModal({
+        title: 'Replace the interview in progress?',
+        sub: 'You have an unfinished interview. Starting a new one discards it.',
+        actions: [{ label: 'Cancel' }, { label: 'Discard and continue', kind: 'danger', onClick: () => { store.del(K_ACTIVE); renderResume(); setTimeout(openBriefing, 0); } }],
+      });
+      return;
+    }
+    openBriefing();
+  };
+
+  function openBriefing() {
+    const P = problem(prefs.problemId);
+    openModal({
+      title: 'Before you begin',
+      sub: P.title + ' · ' + P.team,
+      body: `
+        <div class="modal-facts"><div><small>Time limit</small><b>${prefs.duration} min</b></div><div><small>Token budget</small><b>${fmt(prefs.budget)}</b></div><div><small>Tests</small><b>${P.tests.length} visible, ${P.hidden.length} hidden</b></div></div>
+        <ul>
+          <li><b>Use the assistant however you like.</b> You are assessed on how you direct and check its work, as well as on the final code.</li>
+          <li><b>Every message spends tokens:</b> the instructions and problem, your message, whatever you attach, recent history and the reply. A reply that would overrun the budget is cut off.</li>
+          <li><b>Run the visible tests anytime.</b> Hidden tests, including large inputs, run when you submit.</li>
+          <li><b>The clock starts when you press Begin.</b> At zero, your code is submitted as it stands.</li>
+          <li>Prompts, test runs, applied suggestions and pastes are recorded for the scorecard.</li>
+        </ul>
+        <label class="check"><input type="checkbox" id="brief-ack"> I understand that this session is timed and recorded.</label>`,
+      actions: [{ label: 'Cancel' }, { label: 'Begin interview', kind: 'primary', id: 'brief-go', disabled: true, onClick: () => startSession(null) }],
+      onOpen: () => { const c = $('#brief-ack'); c.onchange = () => { $('#brief-go').disabled = !c.checked; }; c.focus(); },
+    });
+  }
+
+  // ---------- Session lifecycle ----------
+  function newSession() {
+    const P = problem(prefs.problemId);
+    const now = Date.now();
+    return {
+      id: uid(), problemId: P.id, budget: prefs.budget, duration: prefs.duration, tier: prefs.tier, name: (prefs.name || '').trim(),
+      startedAt: now, endsAt: now + prefs.duration * 60000, code: P.starter, notes: '', used: 0,
+      turns: [], events: [{ t: 0, type: 'start', text: 'Interview started' }], runs: [], lastRun: null,
+      ctx: { code: true, tests: false, hist: true }, offlineHint: 0, status: 'active', agentModes: [],
+    };
+  }
+  function startSession(existing) {
+    sess = existing || newSession();
+    showView('session');
+    const P = problem(sess.problemId);
+    $('#tb-title').textContent = P.title;
+    $('#tb-sub').textContent = P.team + ' · ' + P.difficulty + ' · Session ' + sess.id;
+    renderBrief(P);
+    $('#notes').value = sess.notes || '';
+    mountEditor(sess.code);
+    renderThread();
+    renderCtxToggles();
+    renderGauge();
+    renderConsole();
+    tickTimer();
+    clearInterval(timerHandle);
+    timerHandle = setInterval(tickTimer, 1000);
+    setAgentMode(agentMode);
+    persist();
+    setMobileTab('pane-editor');
+  }
+  function persist(now) {
+    if (!sess || sess.status !== 'active') return;
+    clearTimeout(saveHandle);
+    const go = () => { store.set(K_ACTIVE, sess); $('#save-state').textContent = 'Saved ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); };
+    if (now) go(); else saveHandle = setTimeout(go, 600);
+  }
+  const elapsed = () => Date.now() - sess.startedAt;
+  function logEvent(type, text, extra) { sess.events.push(Object.assign({ t: elapsed(), type, text }, extra || {})); persist(); }
+
+  function tickTimer() {
+    if (!sess || sess.status !== 'active') return;
+    const left = sess.endsAt - Date.now();
+    $('#t-left').textContent = mmss(left);
+    $('#timer').dataset.state = left <= 60000 ? 'bad' : left <= 5 * 60000 ? 'warn' : 'ok';
+    if (left <= 0) { clearInterval(timerHandle); logEvent('timeout', 'Time ran out'); closeModal(); submit(true); }
+  }
+
+  // ---------- Problem brief ----------
+  function renderBrief(P) {
+    $('#brief-body').innerHTML = `<div class="brief">
+      <div style="display:grid;gap:8px"><h2>${esc(P.title)}</h2>
+      <div class="brief-meta"><span class="chip ${P.difficulty.toLowerCase()}">${P.difficulty}</span><span class="chip">${esc(P.team)}</span>${P.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div></div>
+      <p class="scenario">${esc(P.scenario)}</p>
+      <div class="brief-body">${P.body}</div>
+      <section><h3>Example</h3><pre class="example">${esc(P.examples)}</pre></section>
+      <section><h3>Constraints</h3><ul class="constraints">${P.constraints.map(c => `<li>${esc(c)}</li>`).join('')}</ul></section>
+      <section><h3>Tests</h3><div class="test-list">${P.tests.map(t => `<div><span class="dot faint"></span>${esc(t.name)}</div>`).join('')}<div class="hidden-note"><span class="dot"></span>${P.hidden.length} hidden tests run when you submit</div></div></section>
+      <details class="followups"><summary>Questions your interviewer may ask</summary><ul>${P.followUps.map(f => `<li>${esc(f)}</li>`).join('')}</ul></details>
+    </div>`;
+  }
+  $$('[data-btab]').forEach(b => b.onclick = () => {
+    $$('[data-btab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+    $('#brief-body').hidden = b.dataset.btab !== 'brief';
+    $('#notes-body').hidden = b.dataset.btab !== 'notes';
+  });
+  $('#notes').addEventListener('input', e => {
+    if (!sess) return;
+    const had = (sess.notes || '').trim().length > 0;
+    sess.notes = e.target.value;
+    if (!had && sess.notes.trim()) logEvent('notes', 'Started writing notes');
+    persist();
+  });
+  $('#btn-brief').onclick = () => $('#workbench').classList.toggle('show-brief');
+
+  // ---------- Editor ----------
+  function mountEditor(code) {
+    const host = $('#editor-host');
+    host.innerHTML = '';
+    if (window.CodeMirror) {
+      const cm = window.CodeMirror(host, {
+        value: code, mode: 'javascript', lineNumbers: true, indentUnit: 2, tabSize: 2, autoCloseBrackets: true, matchBrackets: true, lineWrapping: false,
+        extraKeys: {
+          Tab: c => c.somethingSelected() ? c.indentSelection('add') : c.replaceSelection('  '),
+          'Shift-Tab': c => c.indentSelection('subtract'),
+          'Cmd-Enter': () => runVisible(), 'Ctrl-Enter': () => runVisible(),
+        },
+      });
+      cm.on('change', (c, ch) => {
+        if (!sess) return;
+        sess.code = c.getValue();
+        if (ch.origin === 'paste') { const n = ch.text.join('\n').length; if (n >= 40) logEvent('paste', 'Pasted ' + n + ' characters into the editor', { chars: n }); }
+        renderCtxToggles(); persist();
+      });
+      editor = {
+        get: () => cm.getValue(),
+        set: v => { cm.setValue(v); cm.focus(); flash(cm, 0, cm.lineCount()); },
+        insert: v => { const from = cm.getCursor(); cm.replaceSelection(v, 'end', 'apply'); const to = cm.getCursor(); cm.focus(); flash(cm, from.line, to.line + 1); },
+        refresh: () => cm.refresh(),
+      };
+      setTimeout(() => cm.refresh(), 0);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.className = 'fallback-editor'; ta.id = 'code-fallback'; ta.spellcheck = false; ta.value = code;
+      ta.addEventListener('keydown', e => {
+        if (e.key === 'Tab') { e.preventDefault(); const s = ta.selectionStart; ta.setRangeText('  ', s, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); }
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); runVisible(); }
+      });
+      ta.addEventListener('paste', e => { const n = (e.clipboardData && e.clipboardData.getData('text') || '').length; if (n >= 40) logEvent('paste', 'Pasted ' + n + ' characters into the editor', { chars: n }); });
+      ta.addEventListener('input', () => { if (!sess) return; sess.code = ta.value; renderCtxToggles(); persist(); });
+      host.appendChild(ta);
+      editor = {
+        get: () => ta.value,
+        set: v => { ta.value = v; ta.dispatchEvent(new Event('input')); ta.focus(); },
+        insert: v => { ta.setRangeText(v, ta.selectionStart, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); ta.focus(); },
+        refresh: () => {},
+      };
+    }
+  }
+  function flash(cm, a, b) {
+    const mark = cm.markText({ line: a, ch: 0 }, { line: Math.max(a, b - 1), ch: 9999 }, { className: 'cm-flash' });
+    setTimeout(() => mark.clear(), 1400);
+  }
+  let resetArmed = null;
+  $('#btn-reset').onclick = () => {
+    const b = $('#btn-reset');
+    if (!resetArmed) {
+      b.textContent = 'Click again to reset'; b.classList.add('btn-danger');
+      resetArmed = setTimeout(() => { resetArmed = null; b.textContent = 'Reset code'; b.classList.remove('btn-danger'); }, 3000);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = null; b.textContent = 'Reset code'; b.classList.remove('btn-danger');
+    editor.set(problem(sess.problemId).starter);
+    logEvent('reset', 'Reset the code to the starter');
+    toast('Code reset to the starter');
+  };
+
+  // ---------- Test runner (Web Worker) ----------
+  function workerMain() {
+    self.onmessage = function (e) {
+      var code = e.data.code, tests = e.data.tests, logs = [];
+      function show(v) {
+        try {
+          if (typeof v === 'string') return v;
+          if (v === undefined) return 'undefined';
+          if (typeof v === 'function') return '[Function]';
+          if (typeof v === 'number' && !isFinite(v)) return String(v);
+          return JSON.stringify(v, function (k, x) { return x instanceof Map ? { Map: Array.from(x) } : x instanceof Set ? { Set: Array.from(x) } : x === undefined ? '__undefined__' : x; }).replace(/"__undefined__"/g, 'undefined');
+        } catch (_) { return String(v); }
+      }
+      function cap() { if (logs.length < 300) logs.push(Array.prototype.map.call(arguments, show).join(' ')); }
+      try { console.log = cap; console.info = cap; console.warn = cap; console.error = cap; console.debug = cap; } catch (_) { self.console = { log: cap, info: cap, warn: cap, error: cap, debug: cap }; }
+      function eq(a, b) {
+        if (a === b) return true;
+        if (typeof a === 'number' && typeof b === 'number') return a !== a && b !== b;
+        if (!a || !b || typeof a !== 'object' || typeof b !== 'object') return false;
+        if (Array.isArray(a) !== Array.isArray(b)) return false;
+        var ka = Object.keys(a), kb = Object.keys(b);
+        if (ka.length !== kb.length) return false;
+        for (var i = 0; i < ka.length; i++) if (!Object.prototype.hasOwnProperty.call(b, ka[i]) || !eq(a[ka[i]], b[ka[i]])) return false;
+        return true;
+      }
+      var RUN = '\n;return __tests.map(function (__t) { var __s = performance.now(); try { var __r = eval("(function(){" + __t.src + "\\n})")(); return { name: __t.name, pass: __eq(__r[0], __r[1]), got: __show(__r[0]), expected: __show(__r[1]), ms: performance.now() - __s }; } catch (__e) { return { name: __t.name, pass: false, error: (__e && __e.name ? __e.name + ": " : "") + (__e && __e.message !== undefined ? __e.message : String(__e)), ms: performance.now() - __s }; } });';
+      var runner;
+      try { runner = new Function('__tests', '__eq', '__show', code + RUN); }
+      catch (err) { self.postMessage({ compileError: (err && err.name ? err.name + ': ' : '') + (err && err.message || err), logs: logs }); return; }
+      try { var results = runner(tests, eq, show); self.postMessage({ results: results, logs: logs }); }
+      catch (err2) { self.postMessage({ compileError: 'Your code threw while loading: ' + (err2 && err2.name ? err2.name + ': ' : '') + (err2 && err2.message || err2), logs: logs }); }
+    };
+  }
+  const WORKER_URL = URL.createObjectURL(new Blob(['(' + workerMain.toString() + ')()'], { type: 'text/javascript' }));
+
+  function runTests(code, tests, limitMs) {
+    return new Promise(resolve => {
+      const t0 = performance.now();
+      let w;
+      try { w = new Worker(WORKER_URL); } catch (e) { resolve({ compileError: 'The test runner could not start in this browser: ' + e.message, logs: [], ms: 0 }); return; }
+      const kill = setTimeout(() => { w.terminate(); resolve({ timeout: true, logs: [], ms: limitMs, results: tests.map(t => ({ name: t.name, pass: false, error: 'Timed out: the run exceeded ' + limitMs / 1000 + ' s (infinite loop or too slow)' })) }); }, limitMs);
+      w.onmessage = e => { clearTimeout(kill); w.terminate(); resolve(Object.assign({ ms: performance.now() - t0 }, e.data)); };
+      w.onerror = e => { clearTimeout(kill); w.terminate(); e.preventDefault && e.preventDefault(); resolve({ compileError: e.message || 'The code failed to run', logs: [], ms: performance.now() - t0 }); };
+      w.postMessage({ code, tests: tests.map(t => ({ name: t.name, src: t.src })) });
+    });
+  }
+  function summarizeRun(r, total) {
+    if (r.compileError) return { passed: 0, total, error: r.compileError };
+    const passed = (r.results || []).filter(x => x.pass).length;
+    return { passed, total };
+  }
+
+  let running = false;
+  async function runVisible() {
+    if (!sess || running || sess.status !== 'active') return;
+    running = true;
+    const btn = $('#btn-run'); btn.disabled = true;
+    $('#run-meta').textContent = 'Running…';
+    const P = problem(sess.problemId);
+    const r = await runTests(editor.get(), P.tests, 6000);
+    running = false; btn.disabled = false;
+    const s = summarizeRun(r, P.tests.length);
+    sess.lastRun = { t: elapsed(), passed: s.passed, total: s.total, compileError: r.compileError || null, timeout: !!r.timeout, results: (r.results || []).map(x => ({ name: x.name, pass: x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms })), logs: (r.logs || []).slice(0, 100), ms: r.ms };
+    sess.runs.push({ t: sess.lastRun.t, passed: s.passed, total: s.total });
+    logEvent(s.passed === s.total ? 'run' : 'runfail', r.compileError ? 'Ran tests: code did not load' : 'Ran tests: ' + s.passed + ' of ' + s.total + ' passed', { passed: s.passed, total: s.total });
+    renderConsole();
+    renderCtxToggles();
+    showConsoleTab('tests');
+    if (window.matchMedia('(max-width: 760px)').matches) setMobileTab('pane-editor');
+  }
+  $('#btn-run').onclick = runVisible;
+
+  function renderConsole() {
+    const r = sess && sess.lastRun;
+    const host = $('#console-tests');
+    if (!r) {
+      host.innerHTML = '<p class="console-empty">Run the visible tests to see results here. Hidden tests run when you submit.</p>';
+      $('#console-logs').innerHTML = '<p class="console-empty">console.log output from your code appears here.</p>';
+      $('#run-meta').textContent = '';
+      return;
+    }
+    $('#run-meta').textContent = 'Last run ' + mmss(r.t) + ' · ' + Math.round(r.ms) + ' ms';
+    if (r.compileError) {
+      host.innerHTML = `<div class="run-summary bad">Your code did not load</div><div class="compile-err">${esc(r.compileError)}</div>`;
+    } else {
+      const ok = r.passed === r.total;
+      host.innerHTML = `<div class="run-summary ${ok ? 'ok' : 'bad'}">${ok ? 'All ' + r.total + ' visible tests passed' : r.passed + ' of ' + r.total + ' visible tests passed'}${ok ? '<span class="faint" style="font-weight:400"> · hidden tests run on submit</span>' : ''}</div>` +
+        r.results.map(x => `<div class="result ${x.pass ? 'pass' : 'fail'}"><span class="mark">${x.pass ? '✓' : '✕'}</span><span>${esc(x.name)}</span><span class="ms">${x.ms != null ? x.ms.toFixed(1) + ' ms' : ''}</span>
+          ${x.pass ? '' : `<div class="detail">${x.error ? `<span>${esc(x.error)}</span>` : `<span><em>expected </em>${esc(x.expected)}</span><span><em>received </em>${esc(x.got)}</span>`}</div>`}</div>`).join('');
+    }
+    $('#console-logs').innerHTML = r.logs.length ? r.logs.map(l => `<div class="log-line">${esc(l)}</div>`).join('') : '<p class="console-empty">Your code did not log anything on the last run.</p>';
+  }
+  function showConsoleTab(which) {
+    $$('[data-ctab]').forEach(x => x.setAttribute('aria-selected', String(x.dataset.ctab === which)));
+    $('#console-tests').hidden = which !== 'tests';
+    $('#console-logs').hidden = which !== 'logs';
+  }
+  $$('[data-ctab]').forEach(b => b.onclick = () => showConsoleTab(b.dataset.ctab));
+
+  // ---------- Assistant: context and cost ----------
+  function buildPreamble(P) {
+    return [
+      'You are the AI coding assistant built into a live, timed technical interview. The candidate is solving the problem below in JavaScript and may use you freely, as they would a capable pair programmer. The interviewer evaluates how well the candidate directs, questions and verifies your work.',
+      '',
+      'How to respond:',
+      '- Be concise. The candidate pays for every token you read and write from a fixed budget. No preamble, no recap of the question.',
+      '- Answer exactly what was asked. If the request is ambiguous, ask one short clarifying question instead of guessing.',
+      '- When you write code, put it in a single ' + FENCE + 'js fenced block. If they ask for a full solution, give a complete, runnable function or class with the exact name and signature from the starter code.',
+      '- You cannot run code. Never claim that you ran tests. Never guess what hidden tests contain.',
+      '- Use plain markdown: short paragraphs, bullet lists, inline code.',
+      '',
+      'PROBLEM: ' + P.title,
+      'Context: ' + P.scenario,
+      stripHtml(P.body),
+      '',
+      'Example:',
+      P.examples,
+      '',
+      'Constraints: ' + P.constraints.join('; '),
+      '',
+      'Starter signature:',
+      P.starter.replace(/\n\s*\/\/ TODO\n/g, '\n').slice(0, 900),
+    ].join('\n');
+  }
+  function lastRunText() {
+    const r = sess.lastRun;
+    if (!r) return '';
+    if (r.compileError) return 'Code failed to load: ' + r.compileError;
+    return r.passed + '/' + r.total + ' visible tests passed.\n' + r.results.filter(x => !x.pass).map(x => '- FAIL ' + x.name + ': ' + (x.error ? x.error : 'expected ' + x.expected + ', received ' + x.got)).join('\n').slice(0, 1500);
+  }
+  function buildRequest(message) {
+    const P = problem(sess.problemId);
+    const pre = buildPreamble(P);
+    const done = sess.turns.filter(t => !t.live && !t.failed);
+    const hist = sess.ctx.hist ? done.slice(-MAX_HISTORY_TURNS).map(t => ({ role: t.role, content: t.role === 'user' ? t.message : t.content })) : [];
+    let content = message;
+    const att = [];
+    if (sess.ctx.code) { content += '\n\n[Candidate\'s current code, solution.js]\n' + FENCE + 'js\n' + editor.get() + '\n' + FENCE; att.push('code'); }
+    if (sess.ctx.tests && sess.lastRun) { content += '\n\n[Latest visible test run]\n' + lastRunText(); att.push('tests'); }
+    const input = [{ role: 'user', content: pre }].concat(hist, [{ role: 'user', content }]);
+    const parts = {
+      setup: est(pre),
+      history: hist.reduce((a, t) => a + est(t.content) + 4, 0),
+      code: sess.ctx.code ? est(editor.get()) + 12 : 0,
+      tests: sess.ctx.tests && sess.lastRun ? est(lastRunText()) + 8 : 0,
+      message: est(message) + 4,
+    };
+    const inTok = parts.setup + parts.history + parts.code + parts.tests + parts.message;
+    return { input, content, inTok, parts, att };
+  }
+  const remaining = () => Math.max(0, sess.budget - sess.used);
+  const MIN_REPLY = 120;
+
+  function renderCtxToggles() {
+    if (!sess) return;
+    $('#ctx-code').setAttribute('aria-pressed', String(sess.ctx.code));
+    $('#ctx-tests').setAttribute('aria-pressed', String(sess.ctx.tests && !!sess.lastRun));
+    $('#ctx-tests').disabled = !sess.lastRun;
+    $('#ctx-code-n').textContent = '≈' + fmt(est(editor ? editor.get() : sess.code) + 12);
+    $('#ctx-tests-n').textContent = sess.lastRun ? '≈' + fmt(est(lastRunText()) + 8) : 'none yet';
+    const hb = $('#ctx-hist');
+    if (hb) {
+      hb.setAttribute('aria-pressed', String(sess.ctx.hist));
+      const done = sess.turns.filter(t => !t.live && !t.failed).slice(-MAX_HISTORY_TURNS);
+      $('#ctx-hist-n').textContent = done.length ? '≈' + fmt(done.reduce((a, t) => a + est(t.role === 'user' ? t.message : t.content) + 4, 0)) : 'empty';
+    }
+    renderCost();
+  }
+  $('#ctx-code').onclick = () => { sess.ctx.code = !sess.ctx.code; renderCtxToggles(); persist(); };
+  $('#ctx-tests').onclick = () => { if (!sess.lastRun) return; sess.ctx.tests = !sess.ctx.tests; renderCtxToggles(); persist(); };
+  document.addEventListener('click', e => { if (e.target.closest('#ctx-hist')) { sess.ctx.hist = !sess.ctx.hist; renderCtxToggles(); persist(); } });
+
+  function renderCost() {
+    if (!sess) return;
+    const msg = $('#prompt').value;
+    const left = remaining();
+    const send = $('#btn-send');
+    const cost = $('#cost');
+    if (streaming) { send.hidden = true; $('#btn-stop').hidden = false; cost.innerHTML = 'Replying… <b>' + fmt(liveTotal()) + '</b> tokens on this exchange'; cost.classList.remove('over'); renderGauge(0); return; }
+    send.hidden = false; $('#btn-stop').hidden = true;
+    if (sess.status !== 'active') { send.disabled = true; return; }
+    if (left <= 0) {
+      cost.innerHTML = ''; send.disabled = true;
+      if (!$('#locked-note')) $('#composer').insertAdjacentHTML('afterbegin', '<p class="locked" id="locked-note">Your token budget is spent. The assistant is locked; keep going on your own, then submit.</p>');
+      $('#prompt').disabled = true;
+      renderGauge(0);
+      return;
+    }
+    const req = buildRequest(msg.trim() || ' ');
+    const need = req.inTok + MIN_REPLY;
+    const over = need > left;
+    cost.classList.toggle('over', over);
+    cost.title = 'Instructions and problem ' + fmt(req.parts.setup) + ' · history ' + fmt(req.parts.history) + ' · code ' + fmt(req.parts.code) + ' · test output ' + fmt(req.parts.tests) + ' · message ' + fmt(req.parts.message);
+    cost.innerHTML = msg.trim()
+      ? (over ? '<b>Needs ≈' + fmt(need) + '</b> with a short reply; ' + fmt(left) + ' left. Detach context to fit.' : 'Sends <b>≈' + fmt(req.inTok) + '</b> tokens + the reply · ' + fmt(left) + ' left')
+      : 'Context alone is ≈' + fmt(req.inTok - req.parts.message) + ' tokens · ' + fmt(left) + ' left';
+    send.disabled = !msg.trim() || over || agentMode === 'checking';
+    renderGauge(msg.trim() && !over ? req.inTok : 0);
+  }
+  $('#prompt').addEventListener('input', renderCost);
+  $('#prompt').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!$('#btn-send').disabled) sendPrompt(); }
+  });
+  $('#btn-send').onclick = sendPrompt;
+  $('#btn-stop').onclick = () => { if (streaming) streaming.ctl.abort(); };
+
+  function liveTotal() { return streaming ? streaming.turn.inTok + est(streaming.turn.content) : 0; }
+
+  // ---------- Token gauge ----------
+  function renderGauge(preview) {
+    if (!sess) return;
+    const used = sess.used + liveTotal();
+    const left = Math.max(0, sess.budget - used);
+    $('#g-left').textContent = fmt(left);
+    $('#g-of').textContent = 'tokens left of ' + fmt(sess.budget);
+    const pct = left / sess.budget;
+    $('#gauge').dataset.state = pct <= 0.1 ? 'bad' : pct <= 0.25 ? 'warn' : 'ok';
+    const track = $('#g-track');
+    track.setAttribute('aria-valuenow', String(used)); track.setAttribute('aria-valuemin', '0'); track.setAttribute('aria-valuemax', String(sess.budget));
+    track.setAttribute('aria-valuetext', fmt(left) + ' tokens left of ' + fmt(sess.budget));
+    const W = v => clamp(v / sess.budget * 100, 0, 100).toFixed(3) + '%';
+    const segs = [];
+    const asst = sess.turns.filter(t => t.role === 'assistant' && !t.failed);
+    for (const t of asst) {
+      const out = t.live ? est(t.content) : t.outTok;
+      segs.push(`<span class="gauge-seg${t.live ? ' live' : ''}" style="width:${W(t.inTok + out)}" title="Exchange ${t.n}: ${fmt(t.inTok)} sent, ${fmt(out)} reply"><i class="in" style="width:${(t.inTok / Math.max(1, t.inTok + out) * 100).toFixed(2)}%"></i><i class="out" style="flex:1"></i></span>`);
+    }
+    if (preview && !streaming) segs.push(`<span class="gauge-preview" style="width:${W(Math.min(preview, left))}" title="This message would send ≈${fmt(preview)} tokens"></span>`);
+    track.innerHTML = segs.join('');
+  }
+
+  // ---------- Assistant: thread rendering ----------
+  function mdInline(s) { return s.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'); }
+  function mdText(t) {
+    const lines = esc(t).split('\n');
+    let out = '', list = null, para = [];
+    const flushP = () => { if (para.length) { out += '<p>' + mdInline(para.join(' ')) + '</p>'; para = []; } };
+    const flushL = () => { if (list) { out += '</' + list + '>'; list = null; } };
+    for (const raw of lines) {
+      const l = raw.trim(); let m;
+      if (!l) { flushP(); flushL(); continue; }
+      if ((m = l.match(/^#{1,6}\s+(.*)/))) { flushP(); flushL(); out += '<h4>' + mdInline(m[1]) + '</h4>'; continue; }
+      if ((m = l.match(/^[-*•]\s+(.*)/))) { flushP(); if (list !== 'ul') { flushL(); out += '<ul>'; list = 'ul'; } out += '<li>' + mdInline(m[1]) + '</li>'; continue; }
+      if ((m = l.match(/^\d+[.)]\s+(.*)/))) { flushP(); if (list !== 'ol') { flushL(); out += '<ol>'; list = 'ol'; } out += '<li>' + mdInline(m[1]) + '</li>'; continue; }
+      flushL(); para.push(l);
+    }
+    flushP(); flushL();
+    return out;
+  }
+  function md(src, key, interactive) {
+    const parts = String(src).split(FENCE);
+    let html = '';
+    parts.forEach((p, i) => {
+      if (i % 2 === 1) {
+        const nl = p.indexOf('\n');
+        const lang = nl >= 0 ? p.slice(0, nl).trim() : '';
+        const code = (nl >= 0 ? p.slice(nl + 1) : p).replace(/\n$/, '');
+        const id = key + '-' + i;
+        codeStore.set(id, code);
+        const closed = i < parts.length - 1;
+        const dis = !interactive || !closed ? ' disabled' : '';
+        html += `<div class="cb"><div class="cb-bar"><span>${esc(lang || 'code')}</span>${interactive ? `<button data-cb="insert" data-id="${id}"${dis}>Insert at cursor</button><button data-cb="replace" data-id="${id}"${dis}>Replace file</button>` : ''}<button data-cb="copy" data-id="${id}"${closed ? '' : ' disabled'}>Copy</button></div><pre><code>${esc(code)}</code></pre></div>`;
+      } else if (p.trim()) html += mdText(p);
+    });
+    return html;
+  }
+  function turnHTML(t, idx, interactive) {
+    if (t.role === 'user') {
+      const att = (t.att || []).map(a => `<span class="chip">${a === 'code' ? 'Code attached' : 'Test run attached'}</span>`).join('');
+      return `<div class="msg user"><div class="msg-meta"><b>You</b><span>${mmss(t.t)}</span></div><div class="msg-text">${esc(t.message)}</div>${att ? `<div class="msg-attach">${att}</div>` : ''}</div>`;
+    }
+    const meta = t.live ? 'writing…' : t.failed ? '' : fmt(t.inTok) + ' sent · ' + fmt(t.outTok) + ' reply' + (t.exact ? ' (exact)' : '');
+    let body;
+    if (t.live && !t.content) body = '<div class="thinking">Thinking</div>';
+    else body = `<div class="msg-text">${md(t.content, 'm' + idx, interactive && !t.live)}</div>`;
+    const who = t.mode === 'offline' ? 'Practice assistant' : 'Assistant';
+    return `<div class="msg agent"><div class="msg-meta"><b>${who}</b><span>${mmss(t.t)}</span><span>${meta}</span></div>${body}${t.note ? `<p class="msg-error">${esc(t.note)}</p>` : ''}</div>`;
+  }
+  function renderThread() {
+    const host = $('#thread');
+    if (!sess.turns.length) {
+      const P = problem(sess.problemId);
+      const S = [
+        { text: 'Restate the problem in your own words and list the edge cases I need to handle. No code yet.', code: false },
+        { text: 'Propose an approach with its time and space complexity. Keep it to a few bullets.', code: false },
+        { text: P.id === 'reconcile' ? 'Review this code against the spec and list every bug you find, with line references. Do not fix them yet.' : 'Review my code for bugs and missed edge cases. Point to lines; do not rewrite it.', code: true },
+      ];
+      host.innerHTML = `<div class="starters"><p>${agentMode === 'offline' ? esc(offlineReason) + ' ' : ''}The assistant can see the problem. Attach your code when you want it reviewed. Some ways to start:</p>${S.map(s => `<button data-starter="${esc(s.text)}" data-code="${s.code}"><span>${esc(s.text)}</span></button>`).join('')}</div>`;
+      $$('[data-starter]', host).forEach(b => b.onclick = () => {
+        sess.ctx.code = b.dataset.code === 'true'; renderCtxToggles();
+        const p = $('#prompt'); p.value = b.dataset.starter; p.focus(); renderCost();
+      });
+      return;
+    }
+    host.innerHTML = sess.turns.map((t, i) => turnHTML(t, i, true)).join('');
+    const sc = $('#thread-scroll'); sc.scrollTop = sc.scrollHeight;
+  }
+  function updateLiveTurn() {
+    const last = $('#thread').lastElementChild;
+    const i = sess.turns.length - 1;
+    if (last) last.outerHTML = turnHTML(sess.turns[i], i, true);
+    const sc = $('#thread-scroll');
+    if (sc.scrollHeight - sc.scrollTop - sc.clientHeight < 160) sc.scrollTop = sc.scrollHeight;
+    renderGauge(0);
+    renderCost();
+  }
+  $('#thread').addEventListener('click', e => {
+    const b = e.target.closest('[data-cb]'); if (!b) return;
+    const code = codeStore.get(b.dataset.id) || '';
+    if (b.dataset.cb === 'copy') {
+      navigator.clipboard.writeText(code).then(() => toast('Copied to clipboard'), () => toast('Copy is blocked here. Select the code and copy it manually.'));
+      return;
+    }
+    if (!sess || sess.status !== 'active') return;
+    const lines = code.split('\n').length;
+    if (b.dataset.cb === 'insert') { editor.insert(code); logEvent('apply', 'Inserted ' + lines + ' lines from the assistant', { lines, mode: 'insert' }); toast('Inserted ' + lines + ' lines at the cursor'); }
+    else { editor.set(code); logEvent('apply', 'Replaced the file with ' + lines + ' lines from the assistant', { lines, mode: 'replace' }); toast('Replaced solution.js with the assistant’s code'); }
+    if (window.matchMedia('(max-width: 760px)').matches) setMobileTab('pane-editor');
+  });
+
+  // ---------- Assistant: sending ----------
+  async function sendPrompt() {
+    if (!sess || streaming || sess.status !== 'active') return;
+    const message = $('#prompt').value.trim();
+    if (!message) return;
+    const req = buildRequest(message);
+    if (req.inTok + MIN_REPLY > remaining()) { renderCost(); return; }
+    const P = problem(sess.problemId);
+    const n = sess.turns.filter(t => t.role === 'user').length + 1;
+    const userTurn = { role: 'user', message, att: req.att, t: elapsed(), n };
+    const turn = { role: 'assistant', content: '', inTok: req.inTok, outTok: 0, t: elapsed(), n, live: true, mode: agentMode === 'claude' || agentMode === 'byok' ? agentMode : 'offline', parts: req.parts };
+    sess.turns.push(userTurn, turn);
+    logEvent('prompt', message.length > 90 ? message.slice(0, 90) + '…' : message, { n, chars: message.length, att: req.att });
+    $('#prompt').value = '';
+    const ctl = new AbortController();
+    streaming = { ctl, turn };
+    let budgetCut = false;
+    renderThread();
+    renderCost();
+    const cap = remaining() - req.inTok;
+    const onText = ({ text }) => {
+      turn.content = text;
+      if (est(text) >= cap) { budgetCut = true; ctl.abort(); }
+      updateLiveTurn();
+    };
+    try {
+      if (turn.mode === 'claude') {
+        await sample(req.input, { onText, signal: ctl.signal, cache: false, modelTier: sess.tier });
+      } else if (turn.mode === 'byok') {
+        const r = await byokChat(req.input, sess.tier, onText, ctl.signal);
+        turn.usage = r.usage;
+      } else {
+        await offlineStream(offlineReply(message, P), onText, ctl.signal);
+      }
+    } catch (e) {
+      const code = e && e.code;
+      if (e && typeof e.text === 'string') turn.content = e.text;
+      if (code === 'cancelled') {
+        turn.note = budgetCut ? 'Cut off: the token budget ran out mid-reply.' : 'Stopped. Tokens for the part already written were still charged.';
+      } else if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed', 'session_expired'].includes(code)) {
+        setAgentMode('offline', code === 'not_granted' ? 'Claude access was declined for this page, so the built-in practice assistant is answering.' : 'Claude is unavailable for this account, so the built-in practice assistant is answering.');
+        turn.mode = 'offline'; turn.content = '';
+        try { await offlineStream(offlineReply(message, P), onText, ctl.signal); } catch (_) { /* stopped */ }
+        if (!turn.note) turn.note = 'Answered by the practice assistant because Claude was not available.';
+      } else if (code === 'bad_key') {
+        clearKey(); byok = null;
+        setAgentMode('offline', 'Your API key was rejected, so the built-in practice assistant is answering. Reconnect a valid key to use Claude.');
+        turn.mode = 'offline'; turn.content = '';
+        try { await offlineStream(offlineReply(message, P), onText, ctl.signal); } catch (_) { /* stopped */ }
+        turn.note = 'Answered by the practice assistant because your API key was rejected.';
+      } else if (code === 'bad_request') {
+        turn.note = 'The API rejected the request: ' + ((e && e.message) || 'bad request') + '. No tokens were charged.';
+        if (!turn.content) turn.failed = true;
+      } else if (code === 'rate_limited') {
+        turn.note = 'Claude is rate-limited right now. Wait a minute, then send again. No tokens were charged for the unwritten part.';
+        if (!turn.content) turn.failed = true;
+      } else if (code === 'refused') {
+        turn.content = ''; turn.failed = true; turn.note = 'Claude declined this request. Rephrase it and send again. No tokens were charged.';
+      } else {
+        turn.note = 'The reply was interrupted (' + (code || 'network error') + '). Send again to retry.';
+        if (!turn.content) turn.failed = true;
+      }
+    }
+    turn.live = false;
+    if (turn.failed) {
+      turn.inTok = 0; turn.outTok = 0;
+      sess.turns.splice(sess.turns.indexOf(userTurn), 1);
+      $('#prompt').value = message;
+    } else {
+      if (turn.usage && Number.isFinite(turn.usage.input_tokens)) {
+        turn.inTok = (turn.usage.input_tokens || 0) + (turn.usage.cache_read_input_tokens || 0) + (turn.usage.cache_creation_input_tokens || 0);
+        turn.outTok = turn.usage.output_tokens || est(turn.content);
+        turn.exact = true;
+        delete turn.usage;
+      } else turn.outTok = est(turn.content);
+      sess.used = Math.min(sess.budget, sess.used + turn.inTok + turn.outTok);
+      logEvent('reply', 'Assistant replied (' + fmt(turn.inTok + turn.outTok) + ' tokens)', { n, inTok: turn.inTok, outTok: turn.outTok, codeBlocks: (turn.content.split(FENCE).length - 1) >> 1 });
+    }
+    streaming = null;
+    renderThread();
+    if (turn.failed) $('#thread').insertAdjacentHTML('beforeend', `<p class="msg-error">${esc(turn.note)}</p>`);
+    renderCtxToggles();
+    persist(true);
+  }
+
+  // ---------- Practice assistant (no Claude available) ----------
+  function offlineStream(text, onText, signal) {
+    return new Promise((resolve, reject) => {
+      let i = 0;
+      const step = () => {
+        if (signal.aborted) { reject({ code: 'cancelled', text: text.slice(0, i) }); return; }
+        i = Math.min(text.length, i + 6 + Math.floor(Math.random() * 18));
+        onText({ text: text.slice(0, i) });
+        if (signal.aborted) { reject({ code: 'cancelled', text: text.slice(0, i) }); return; }
+        if (i >= text.length) resolve({ text }); else setTimeout(step, 22);
+      };
+      setTimeout(step, 450);
+    });
+  }
+  function offlineReply(msg, P) {
+    const m = msg.toLowerCase();
+    const o = P.offline;
+    const nextHint = () => o.hints[(sess.offlineHint++) % o.hints.length];
+    const code = editor.get();
+    const failing = sess.lastRun && sess.lastRun.results ? sess.lastRun.results.filter(r => !r.pass) : [];
+    if (/(review|look at|check my|feedback|list every bug|find.*bugs?)/.test(m)) {
+      const notes = [];
+      if (/TODO/.test(code)) notes.push('There are still `TODO` markers, so some methods return `undefined`.');
+      if (/\.sort\(\)/.test(code)) notes.push('`.sort()` without a comparator sorts numbers as strings. Use `(a, b) => a - b` for numbers.');
+      if (/\.(find|indexOf|includes|filter)\(/.test(code) && /for\s*\(/.test(code)) notes.push('A linear search inside a loop is O(n²) at the stated input sizes. A `Map` or `Set` lookup keeps it linear.');
+      if (/console\.log/.test(code)) notes.push('Remove leftover `console.log` calls before you submit.');
+      if (/===\s*o\.total|\.amount\s*===|total\s*===/.test(code)) notes.push('Comparing money with `===` on floats is fragile. Convert to integer cents first.');
+      if (!notes.length) notes.push('Nothing obviously wrong at a glance. Run the visible tests and probe the edge cases below.');
+      return 'A quick review:\n\n' + notes.map(n => '- ' + n).join('\n') + '\n\nEdge cases to check:\n' + o.edge.slice(0, 3).map(e => '- ' + e).join('\n');
+    }
+    if (/(fail|error|bug|wrong|broken|debug|why does|why is|not work)/.test(m) && (failing.length || (sess.lastRun && sess.lastRun.compileError))) {
+      if (sess.lastRun.compileError) return 'Your code does not load yet:\n\n`' + sess.lastRun.compileError + '`\n\nFix that first; nothing else runs until it parses.';
+      const f = failing[0];
+      return 'The first failing test is **' + f.name + '**. ' + (f.error ? 'It throws `' + f.error + '`.' : 'It expected `' + String(f.expected).slice(0, 160) + '` and received `' + String(f.got).slice(0, 160) + '`.') + '\n\nA likely cause: ' + nextHint();
+    }
+    if (/(edge|corner|test case|what tests|cases)/.test(m)) return 'Edge cases worth a test:\n\n' + o.edge.map(e => '- ' + e).join('\n') + '\n\nYou can add a quick check with `console.log` and look at the Console tab after a run.';
+    if (/(complex|big.?o|performance|faster|slow|optimi|scale)/.test(m)) return o.complexity;
+    if (/(write|implement|full|solution|scaffold|skeleton|code for|give me code|starter)/.test(m)) return 'Here is a scaffold that sets up the data structures. The core logic is left as TODOs; tell me which part you want next.\n\n' + FENCE + 'js\n' + o.skeleton + '\n' + FENCE;
+    if (/(restate|own words|understand|clarif|summar)/.test(m)) return 'In short: ' + P.scenario + '\n\nWhat matters for correctness:\n' + o.edge.map(e => '- ' + e).join('\n');
+    if (/(hint|stuck|approach|idea|how should|how do|plan|start)/.test(m)) return o.approach + '\n\nNext step: ' + nextHint();
+    return o.approach + '\n\nI can list edge cases, explain the complexity, review your code, or draft a scaffold. Say which.';
+  }
+
+  // ---------- Submission ----------
+  $('#btn-submit').onclick = () => {
+    if (!sess || sess.status !== 'active') return;
+    const P = problem(sess.problemId);
+    const lr = sess.lastRun;
+    openModal({
+      title: 'Submit your solution?',
+      sub: 'You cannot edit the code after you submit.',
+      body: `<div class="modal-facts"><div><small>Time left</small><b>${mmss(sess.endsAt - Date.now())}</b></div><div><small>Tokens left</small><b>${fmt(remaining())}</b></div><div><small>Last visible run</small><b>${lr ? (lr.compileError ? 'Did not load' : lr.passed + ' / ' + lr.total) : 'Not run'}</b></div></div>
+        <p class="muted" style="font-size:14px">${P.hidden.length} hidden tests run next, then the assessment is written.${lr ? '' : ' You have not run the visible tests yet.'}</p>`,
+      actions: [{ label: 'Keep working' }, { label: 'Submit solution', kind: 'primary', onClick: () => submit(false) }],
+    });
+  };
+
+  async function submit(auto) {
+    if (!sess || sess.status !== 'active') return;
+    if (streaming) streaming.ctl.abort();
+    clearInterval(timerHandle);
+    sess.status = 'submitted';
+    sess.code = editor.get();
+    sess.submittedAt = Date.now();
+    logEvent('submit', auto ? 'Submitted automatically when time ran out' : 'Submitted the solution');
+    store.set(K_ACTIVE, sess);
+    const s = sess;
+    const P = problem(s.problemId);
+    showView('eval');
+    const steps = [
+      { id: 'vis', label: 'Running visible tests' },
+      { id: 'hid', label: 'Running ' + P.hidden.length + ' hidden tests' },
+      { id: 'ana', label: 'Measuring how you worked with the assistant' },
+      { id: 'ai', label: 'Writing the assessment' },
+    ];
+    $('#eval-steps').innerHTML = steps.map(x => `<div class="eval-step" data-step="${x.id}" data-s="wait"><span class="st"></span><span>${x.label}</span><span class="st-note"></span></div>`).join('');
+    const mark = (id, st, note) => { const el = $(`[data-step="${id}"]`); el.dataset.s = st; if (st === 'done') el.querySelector('.st').textContent = '✓'; if (note != null) el.querySelector('.st-note').textContent = note; };
+
+    mark('vis', 'run');
+    const vis = await runTests(s.code, P.tests, 8000);
+    const visRes = normResults(vis, P.tests);
+    mark('vis', 'done', visRes.filter(r => r.pass).length + ' / ' + P.tests.length);
+    mark('hid', 'run');
+    const hid = await runTests(s.code, P.hidden, 15000);
+    const hidRes = normResults(hid, P.hidden);
+    mark('hid', 'done', hidRes.filter(r => r.pass).length + ' / ' + P.hidden.length);
+    mark('ana', 'run');
+    const metrics = computeMetrics(s, P, visRes, hidRes, vis.compileError || hid.compileError);
+    const heur = heuristicAssessment(s, P, metrics);
+    await new Promise(r => setTimeout(r, 350));
+    mark('ana', 'done');
+    mark('ai', 'run');
+    let ai = null, source = 'rubric';
+    if ((sample && agentMode === 'claude') || (byok && agentMode === 'byok')) {
+      $('#eval-note').textContent = 'Claude is reviewing your code, prompts and test results. This usually takes 20 to 60 seconds.';
+      try {
+        const prompt = buildAssessmentPrompt(s, P, metrics, visRes, hidRes);
+        ai = agentMode === 'claude' ? await sample.json(prompt, { modelTier: 'default', cache: false }) : await byokJson(prompt);
+        source = 'claude';
+      } catch (e) {
+        $('#eval-note').textContent = 'Claude could not write the assessment (' + ((e && e.code) || 'error') + '), so the built-in rubric scored it.';
+      }
+    } else {
+      $('#eval-note').textContent = 'Scored with the built-in rubric because Claude is not connected.';
+      await new Promise(r => setTimeout(r, 500));
+    }
+    mark('ai', 'done', source === 'claude' ? 'Claude' : 'Rubric');
+    const report = buildReport(s, P, metrics, heur, ai, source, visRes, hidRes, vis.compileError || hid.compileError);
+    saveHistory(report);
+    store.del(K_ACTIVE);
+    sess = null;
+    await new Promise(r => setTimeout(r, 400));
+    showReport(report);
+  }
+  function normResults(r, tests) {
+    if (r.compileError) return tests.map(t => ({ name: t.name, pass: false, error: r.compileError }));
+    return (r.results || []).map(x => ({ name: x.name, pass: !!x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms }));
+  }
+
+  // ---------- Metrics and scoring ----------
+  function codeLines(code) {
+    return code.split('\n').map(l => l.trim()).filter(l => l.length >= 6 && !/^(\/\/|\/\*|\*|\})/.test(l) && !/^[{}()[\];,]+$/.test(l));
+  }
+  function computeMetrics(s, P, visRes, hidRes, compileError) {
+    const userTurns = s.turns.filter(t => t.role === 'user');
+    const asstTurns = s.turns.filter(t => t.role === 'assistant' && !t.failed);
+    const prompts = userTurns.map(t => t.message);
+    const aiCode = new Set();
+    asstTurns.forEach(t => t.content.split(FENCE).forEach((p, i) => { if (i % 2) codeLines(p.replace(/^[^\n]*\n/, '')).forEach(l => aiCode.add(l)); }));
+    const finalLines = codeLines(s.code);
+    const starterLines = new Set(codeLines(P.starter));
+    const authored = finalLines.filter(l => !starterLines.has(l));
+    const aiLines = authored.filter(l => aiCode.has(l)).length;
+    const applies = s.events.filter(e => e.type === 'apply');
+    const runs = s.runs;
+    const lastApply = applies.length ? applies[applies.length - 1].t : -1;
+    const ranAfterApply = applies.length ? runs.some(r => r.t > lastApply) : runs.length > 0;
+    const firstPrompt = userTurns.length ? userTurns[0].t : null;
+    const firstApply = applies.length ? applies[0].t : null;
+    const rx = (re) => prompts.filter(p => re.test(p.toLowerCase())).length;
+    const visPass = visRes.filter(r => r.pass).length;
+    const hidPass = hidRes.filter(r => r.pass).length;
+    const timeUsed = (s.submittedAt || Date.now()) - s.startedAt;
+    return {
+      visPass, visTotal: visRes.length, hidPass, hidTotal: hidRes.length,
+      passRate: (visPass + hidPass) / Math.max(1, visRes.length + hidRes.length),
+      compileError: compileError || null,
+      prompts: prompts.length,
+      avgPromptChars: prompts.length ? Math.round(prompts.reduce((a, p) => a + p.length, 0) / prompts.length) : 0,
+      planningPrompts: rx(/(approach|plan|clarif|constraint|edge|complex|trade.?off|restate|understand|why|explain|design)/),
+      verifyPrompts: rx(/(test|edge|review|bug|verify|check|wrong|fail|correct)/),
+      delegatePrompts: rx(/(write|implement|solve|full solution|complete solution|give me the code|code for)/),
+      tokensUsed: s.used, budget: s.budget, tokenPct: s.used / s.budget,
+      codeAttachments: userTurns.filter(t => (t.att || []).includes('code')).length,
+      applies: applies.length, replaceApplies: applies.filter(a => a.mode === 'replace').length,
+      aiLines, authoredLines: authored.length, aiShare: authored.length ? aiLines / authored.length : 0,
+      runs: runs.length, ranAfterApply,
+      pastes: s.events.filter(e => e.type === 'paste').length,
+      notesChars: (s.notes || '').trim().length,
+      firstPromptMin: firstPrompt == null ? null : firstPrompt / 60000,
+      firstApplyMin: firstApply == null ? null : firstApply / 60000,
+      timeUsedMin: timeUsed / 60000, durationMin: s.duration,
+      timedOut: s.events.some(e => e.type === 'timeout'),
+      codeLines: s.code.split('\n').length,
+      hasTodo: /TODO/.test(s.code), hasLogs: /console\.log/.test(s.code),
+      tokensPerPass: (visPass + hidPass) ? s.used / (visPass + hidPass) : null,
+    };
+  }
+
+  function heuristicAssessment(s, P, m) {
+    const pct = x => Math.round(x * 100) + '%';
+    const d = {};
+    // Correctness
+    const total = m.visTotal + m.hidTotal, passed = m.visPass + m.hidPass;
+    let c = m.passRate >= 1 ? 4 : m.passRate >= 0.8 ? 3 : m.passRate >= 0.45 ? 2 : 1;
+    d.correctness = { score: c, evidence: m.compileError ? 'The submitted code did not load: ' + m.compileError.slice(0, 140) : passed + ' of ' + total + ' tests passed (' + m.visPass + '/' + m.visTotal + ' visible, ' + m.hidPass + '/' + m.hidTotal + ' hidden).', improve: c >= 4 ? 'Keep it up: mention the edge cases you covered when you present the solution.' : 'Before submitting, ask which inputs the visible tests do not cover (large inputs, boundaries) and test those yourself.' };
+    // Problem decomposition
+    let p = 2;
+    if (m.notesChars > 60) p++;
+    if (m.planningPrompts > 0 && (m.firstApplyMin == null || m.planningPrompts >= 1)) p++;
+    if (m.prompts && m.delegatePrompts === m.prompts && m.planningPrompts === 0) p--;
+    if (c <= 1) p = Math.min(p, 2);
+    p = clamp(p, 1, 4);
+    d.problem_solving = { score: p, evidence: [m.notesChars > 60 ? 'Wrote ' + m.notesChars + ' characters of planning notes.' : 'No planning notes.', m.planningPrompts ? (m.planningPrompts === 1 ? '1 prompt was' : m.planningPrompts + ' prompts were') + ' about understanding or approach.' : 'No prompts about approach or constraints before asking for code.', m.firstPromptMin != null ? 'First prompt at ' + m.firstPromptMin.toFixed(1) + ' min.' : ''].join(' ').trim(), improve: 'Spend the first few minutes restating the problem, listing edge cases and choosing a data structure, then ask the assistant to implement a specific plan.' };
+    // AI collaboration
+    let a;
+    if (!m.prompts) a = 2;
+    else {
+      a = 2;
+      if (m.avgPromptChars >= 70) a++;
+      if (m.verifyPrompts > 0 || m.planningPrompts > 0) a++;
+      if (m.replaceApplies > 0 && m.runs === 0) a--;
+      if (m.aiShare > 0.9 && m.prompts <= 1) a--;
+    }
+    a = clamp(a, 1, 4);
+    d.ai_collaboration = { score: a, evidence: m.prompts ? pl(m.prompts, 'prompt') + ' averaging ' + m.avgPromptChars + ' characters; ' + pl(m.applies, 'suggestion') + ' applied; about ' + pct(m.aiShare) + ' of the new lines match assistant code.' : 'The assistant was not used, so this area has little evidence either way.', improve: m.prompts ? 'Give the assistant specific instructions (signature, constraints, the approach you chose) and ask it to justify or test its output instead of accepting it whole.' : 'Try using the assistant for the parts it is good at (boilerplate, edge-case lists, reviews) while you keep ownership of the design.' };
+    // Verification
+    let v = m.runs >= 3 ? 3 : m.runs >= 1 ? 2 : 1;
+    if (m.ranAfterApply && m.verifyPrompts > 0) v++;
+    if (m.applies && !m.ranAfterApply) v = Math.min(v, 2);
+    v = clamp(v, 1, 4);
+    d.verification = { score: v, evidence: 'Ran the visible tests ' + pl(m.runs, 'time') + (m.applies ? (m.ranAfterApply ? ', including after applying assistant code.' : ', but not after the last applied suggestion.') : '.') + (m.verifyPrompts ? ' Asked about tests, edge cases or bugs ' + pl(m.verifyPrompts, 'time') + '.' : ''), improve: 'Run tests after every applied change and add one or two quick checks of your own for the cases the visible tests skip.' };
+    // Code quality
+    let q = 3;
+    if (m.hasTodo) q--;
+    if (m.hasLogs) q--;
+    if (m.codeLines > 140) q--;
+    if (c === 4 && !m.hasTodo && !m.hasLogs && m.codeLines <= 80) q++;
+    q = clamp(q, 1, 4);
+    d.code_quality = { score: q, evidence: m.codeLines + ' lines submitted' + (m.hasTodo ? ', with TODO markers left in' : '') + (m.hasLogs ? ', with console.log calls left in' : '') + '.', improve: 'Remove debugging output and TODOs, name helpers by what they do, and keep each method short enough to explain out loud.' };
+    // Efficiency
+    let e = m.tokenPct <= 0.6 ? 4 : m.tokenPct <= 0.85 ? 3 : m.tokenPct < 1 ? 2 : 1;
+    if (c <= 2) e = Math.min(e, 2);
+    if (m.timedOut) e = Math.max(1, e - 1);
+    d.efficiency = { score: e, evidence: 'Used ' + fmt(m.tokensUsed) + ' of ' + fmt(m.budget) + ' tokens (' + pct(m.tokenPct) + ') and ' + m.timeUsedMin.toFixed(1) + ' of ' + m.durationMin + ' minutes' + (m.timedOut ? '; the session timed out.' : '.') + (m.codeAttachments ? ' Attached the full code ' + pl(m.codeAttachments, 'time') + '.' : ''), improve: 'Attach code only when you need a review, turn off history for one-off questions, and ask for short answers. Context is the biggest cost.' };
+
+    const strengths = [], risks = [];
+    if (c >= 3) strengths.push('Solution passes ' + passed + ' of ' + total + ' tests, including hidden ones.');
+    if (m.notesChars > 60 || m.planningPrompts) strengths.push('Planned before generating code.');
+    if (m.ranAfterApply && m.runs >= 2) strengths.push('Verified changes by running the tests repeatedly.');
+    if (m.tokenPct <= 0.6 && c >= 3) strengths.push('Finished well inside the token budget.');
+    if (!strengths.length) strengths.push('Completed the session and submitted a solution.');
+    if (m.hidPass < m.hidTotal) risks.push(pl(m.hidTotal - m.hidPass, 'hidden test') + ' failed: review boundaries and large inputs.');
+    if (m.applies && !m.ranAfterApply) risks.push('Applied assistant code without re-running the tests.');
+    if (m.aiShare > 0.85 && m.prompts) risks.push('Most of the code came straight from the assistant; be ready to explain every line.');
+    if (m.tokenPct >= 0.95) risks.push('Ran out of (or nearly out of) tokens.');
+    if (m.pastes) risks.push(pl(m.pastes, 'large paste') + ' from outside the session ' + (m.pastes === 1 ? 'was' : 'were') + ' recorded.');
+    return {
+      headline: c >= 3 ? 'Working solution with ' + (a >= 3 ? 'deliberate' : 'some') + ' use of the assistant.' : 'The solution is incomplete; ' + (m.prompts ? 'the assistant helped but the result was not fully verified.' : 'more time on verification would help.'),
+      summary: 'You passed ' + passed + ' of ' + total + ' tests and used ' + pct(m.tokenPct) + ' of your token budget across ' + pl(m.prompts, 'prompt') + ' in ' + pl(Math.max(1, Math.round(m.timeUsedMin)), 'minute') + '. ' + (m.runs ? 'You ran the visible tests ' + pl(m.runs, 'time') + '.' : 'You never ran the visible tests before submitting.'),
+      dims: d, strengths, risks,
+      next: ['Re-attempt this problem with half the token budget.', 'Before prompting, write the approach and two edge cases in Notes.', 'Ask the assistant to list inputs that would break your solution, then test them.'],
+      codeNotes: [],
+    };
+  }
+
+  function buildAssessmentPrompt(s, P, m, visRes, hidRes) {
+    const transcript = s.turns.filter(t => !t.failed).map(t => t.role === 'user'
+      ? '[' + mmss(t.t) + '] CANDIDATE' + ((t.att || []).length ? ' (attached: ' + t.att.join(', ') + ')' : '') + ': ' + t.message.slice(0, 900)
+      : '[' + mmss(t.t) + '] ASSISTANT (' + t.inTok + ' in / ' + t.outTok + ' out): ' + t.content.slice(0, 1100)).join('\n\n').slice(-14000);
+    const events = s.events.map(e => '[' + mmss(e.t) + '] ' + e.type + ': ' + e.text).join('\n').slice(-3500);
+    const tests = visRes.map(r => 'visible ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200))).concat(hidRes.map(r => 'hidden ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200)))).join('\n');
+    const numbered = s.code.split('\n').map((l, i) => String(i + 1).padStart(3) + '  ' + l).join('\n').slice(0, 12000);
+    return [
+      'You are a senior engineering interviewer at a large tech company writing the scorecard for an AI-assisted coding interview. The candidate had a coding assistant and a fixed token budget. Judge both the result and how they worked: did they understand and plan, direct the assistant precisely, critically review and verify its output, and manage tokens and time? Rely only on the evidence below. Be direct and specific, cite moments (timestamps, line numbers, prompt wording). Write to the candidate in second person.',
+      '',
+      'PROBLEM: ' + P.title + ' (' + P.difficulty + ')',
+      stripHtml(P.body).slice(0, 1800),
+      '',
+      'WHAT GOOD LOOKS LIKE (interviewer notes): ' + P.rubric,
+      '',
+      'SESSION: ' + mmss(m.timeUsedMin * 60000) + ' used of ' + s.duration + ' min. Tokens ' + m.tokensUsed + ' of ' + m.budget + '. Prompts ' + m.prompts + '. Test runs ' + m.runs + '. Suggestions applied ' + m.applies + ' (' + m.replaceApplies + ' full-file replacements). New lines matching assistant code: ' + Math.round(m.aiShare * 100) + '%. Planning notes: ' + m.notesChars + ' chars. External pastes: ' + m.pastes + '.' + (m.timedOut ? ' The session timed out.' : ''),
+      s.notes && s.notes.trim() ? '\nCANDIDATE NOTES:\n' + s.notes.trim().slice(0, 1500) : '',
+      '',
+      'TEST RESULTS (' + (m.visPass + m.hidPass) + '/' + (m.visTotal + m.hidTotal) + '):',
+      tests,
+      '',
+      'FINAL CODE (line-numbered):',
+      numbered,
+      '',
+      'EVENT LOG:',
+      events,
+      '',
+      'TRANSCRIPT:',
+      transcript || '(The candidate did not use the assistant.)',
+      '',
+      'Reply with only one JSON object of this shape:',
+      '{"headline": "one sentence verdict-style takeaway", "summary": "3-4 sentences", "dimensions": [{"id": "correctness" | "problem_solving" | "ai_collaboration" | "verification" | "code_quality" | "efficiency", "score": 1-4, "evidence": "1-2 sentences citing specifics", "improve": "one concrete action"}], "strengths": ["..."], "risks": ["..."], "next_steps": ["3 concrete practice actions"], "code_notes": [{"line": 12, "note": "specific review comment"}]}',
+      'Include all six dimension ids exactly once. Scores: 1 below bar, 2 mixed, 3 meets bar, 4 exceeds. Give 2-4 strengths, 1-4 risks, 2-5 code_notes.',
+    ].join('\n');
+  }
+
+  function buildReport(s, P, m, heur, ai, source, visRes, hidRes, compileError) {
+    const dims = {};
+    DIMS.forEach(D => {
+      const h = heur.dims[D.id];
+      const a = ai && Array.isArray(ai.dimensions) ? ai.dimensions.find(x => x && x.id === D.id) : null;
+      let score = a && Number.isFinite(+a.score) ? clamp(Math.round(+a.score), 1, 4) : h.score;
+      if (D.id === 'correctness') score = clamp(score, h.score - 1, h.score + 1);
+      if (D.id === 'correctness' && m.passRate < 0.45) score = Math.min(score, 1);
+      dims[D.id] = { score, evidence: (a && a.evidence) || h.evidence, improve: (a && a.improve) || h.improve };
+    });
+    const overall = DIMS.reduce((acc, D) => acc + dims[D.id].score * D.weight, 0);
+    let verdict = overall >= 3.5 ? 'strong_hire' : overall >= 3.0 ? 'hire' : overall >= 2.5 ? 'lean_hire' : overall >= 1.8 ? 'lean_no_hire' : 'no_hire';
+    const rank = ['no_hire', 'lean_no_hire', 'lean_hire', 'hire', 'strong_hire'];
+    if (m.passRate < 0.5 && rank.indexOf(verdict) > 1) verdict = 'lean_no_hire';
+    if (m.passRate < 0.2) verdict = 'no_hire';
+    if (m.passRate < 0.85 && rank.indexOf(verdict) > 2) verdict = 'lean_hire';
+    const arr = (x, f) => Array.isArray(x) && x.length ? x.filter(v => typeof v === 'string' && v.trim()).slice(0, 5) : f;
+    return {
+      id: s.id, date: s.submittedAt || Date.now(), name: s.name, problemId: P.id, title: P.title, team: P.team, difficulty: P.difficulty,
+      budget: s.budget, used: s.used, duration: s.duration, tier: s.tier, source,
+      verdict, overall,
+      headline: (ai && typeof ai.headline === 'string' && ai.headline) || heur.headline,
+      summary: (ai && typeof ai.summary === 'string' && ai.summary) || heur.summary,
+      dims, metrics: m,
+      strengths: arr(ai && ai.strengths, heur.strengths),
+      risks: arr(ai && ai.risks, heur.risks),
+      next: arr(ai && ai.next_steps, heur.next),
+      codeNotes: ai && Array.isArray(ai.code_notes) ? ai.code_notes.filter(n => n && typeof n.note === 'string').slice(0, 6) : [],
+      tests: { visible: visRes, hidden: hidRes, compileError: compileError || null },
+      turns: s.turns.filter(t => !t.failed).map(t => ({ role: t.role, message: t.message, content: t.content, att: t.att, t: t.t, n: t.n, inTok: t.inTok, outTok: t.outTok, mode: t.mode, note: t.note })),
+      events: s.events, runs: s.runs, code: s.code, notes: s.notes || '',
+    };
+  }
+  function saveHistory(r) {
+    const h = store.get(K_HISTORY, []);
+    h.unshift({ id: r.id, date: r.date, title: r.title, name: r.name, verdict: r.verdict, overall: r.overall, budget: r.budget, used: r.used, testsPassed: r.metrics.visPass + r.metrics.hidPass, testsTotal: r.metrics.visTotal + r.metrics.hidTotal, report: r });
+    store.set(K_HISTORY, h.slice(0, 15));
+  }
+
+  // ---------- Report ----------
+  function showReport(r) {
+    showView('report');
+    const m = r.metrics;
+    const D = r.dims;
+    const tok = r.turns.filter(t => t.role === 'assistant');
+    const pct = x => Math.round(x * 100) + '%';
+    $('#report').innerHTML = `
+      <div class="report-head">
+        <div>
+          <div class="meta"><span>${esc(r.name || 'Candidate')}</span><span>${esc(r.title)} · ${esc(r.team)} · ${r.difficulty}</span><span>${new Date(r.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span><span>Session ${esc(r.id)}</span></div>
+          <h1>${esc(r.headline)}</h1>
+          <p class="summary">${esc(r.summary)}</p>
+        </div>
+        <div class="score-block">
+          <span class="verdict big v-${r.verdict}">${VERDICTS[r.verdict]}</span>
+          <div class="score-big">${r.overall.toFixed(1)}<small> / 4</small></div>
+          <p class="source-note">${r.source === 'claude' ? 'Evidence written by Claude; scores weighted by the rubric below.' : 'Scored by the built-in rubric (Claude was not connected).'}</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><small>Tests passed</small><b>${m.visPass + m.hidPass}<span class="faint" style="font-size:15px"> / ${m.visTotal + m.hidTotal}</span></b><span>${m.hidPass}/${m.hidTotal} hidden</span></div>
+        <div class="stat"><small>Tokens used</small><b>${fmt(r.used)}</b><span>${pct(m.tokenPct)} of ${kfmt(r.budget)}</span></div>
+        <div class="stat"><small>Time used</small><b>${mmss(m.timeUsedMin * 60000)}</b><span>of ${r.duration}:00${m.timedOut ? ', timed out' : ''}</span></div>
+        <div class="stat"><small>Prompts</small><b>${m.prompts}</b><span>${m.applies} applied · ${pct(m.aiShare)} AI lines</span></div>
+        <div class="stat"><small>Test runs</small><b>${m.runs}</b><span>${m.ranAfterApply ? 'verified after changes' : m.applies ? 'not re-run after last apply' : 'before submitting'}</span></div>
+      </div>
+
+      <section class="r-section">
+        <h2>Scorecard</h2>
+        <div class="rubric">${DIMS.map(x => `
+          <div class="rubric-row">
+            <div><h3>${x.label}</h3><span class="weight">${x.desc} · ${Math.round(x.weight * 100)}% weight</span></div>
+            <div><div class="pips" data-s="${D[x.id].score}" aria-label="${D[x.id].score} of 4"><i></i><i></i><i></i><i></i></div><span class="pips-label">${D[x.id].score} · ${SCORE_WORDS[D[x.id].score]}</span></div>
+            <div class="ev"><p>${esc(D[x.id].evidence)}</p><p class="imp"><b>Next time:</b> ${esc(D[x.id].improve)}</p></div>
+          </div>`).join('')}
+        </div>
+      </section>
+
+      <div class="two-col">
+        <div class="listbox"><h3>Strengths</h3><ul>${r.strengths.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div class="listbox"><h3>Risks an interviewer would flag</h3><ul>${(r.risks.length ? r.risks : ['None stood out.']).map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      </div>
+
+      <section class="r-section">
+        <h2>Token budget over the session</h2>
+        <div class="chart-box">
+          ${tokenChart(r)}
+          <div class="chart-legend"><span><i style="background:var(--accent)"></i>Cumulative tokens</span><span><i style="background:var(--bad);height:2px"></i>Budget</span><span><i style="background:var(--ink-3);height:2px"></i>Submitted at ${mmss(r.metrics.timeUsedMin * 60000)} of ${r.duration}:00</span></div>
+          ${tok.length ? `<div class="tbl-wrap"><table class="turn-table"><thead><tr><th>#</th><th>Time</th><th>Prompt</th><th class="n">Sent</th><th class="n">Reply</th><th class="n">Total</th></tr></thead><tbody>
+            ${tok.map(t => { const u = r.turns.find(x => x.role === 'user' && x.n === t.n); return `<tr><td class="n">${t.n}</td><td class="n">${mmss(t.t)}</td><td>${esc((u && u.message || '').slice(0, 110))}${u && u.message.length > 110 ? '…' : ''}${u && (u.att || []).length ? ' <span class="chip">' + u.att.join(' + ') + '</span>' : ''}</td><td class="n">${fmt(t.inTok)}</td><td class="n">${fmt(t.outTok)}</td><td class="n">${fmt(t.inTok + t.outTok)}</td></tr>`; }).join('')}
+          </tbody></table></div>` : '<p class="muted" style="font-size:14px">The assistant was not used in this session.</p>'}
+        </div>
+      </section>
+
+      <div class="tests-grid">
+        <section class="r-section"><h2>Tests</h2>${testTable(r)}</section>
+        <section class="r-section"><h2>Timeline</h2><div class="timeline">${r.events.map(e => `<div class="tl-row"><time>${mmss(e.t)}</time><i class="${e.type}"></i><span>${esc(e.text)}</span></div>`).join('')}</div></section>
+      </div>
+
+      <section class="r-section">
+        <h2>Submitted code</h2>
+        ${r.codeNotes.length ? `<ul class="code-notes">${r.codeNotes.map(n => `<li>${n.line ? '<b>Line ' + esc(n.line) + ':</b> ' : ''}${esc(n.note)}</li>`).join('')}</ul>` : ''}
+        <pre class="code-out"><code>${esc(r.code)}</code></pre>
+      </section>
+
+      <div class="two-col">
+        <div class="listbox"><h3>What to practise next</h3><ul>${r.next.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div class="listbox"><h3>Interviewer follow-ups for this problem</h3><ul>${problem(r.problemId).followUps.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      </div>
+
+      ${r.turns.length ? `<details class="transcript"><summary>Assistant transcript (${tok.length} exchanges)</summary><div class="thread">${r.turns.map((t, i) => turnHTML(Object.assign({ live: false }, t), 'r' + i, false)).join('')}</div></details>` : ''}
+
+      <div class="report-actions">
+        <button class="btn btn-primary" id="btn-again">Try this problem again</button>
+        <button class="btn" id="btn-lobby">Choose another problem</button>
+      </div>`;
+    $('#btn-again').onclick = () => { prefs.problemId = r.problemId; savePrefs(); showView('lobby'); renderLobby(); openBriefing(); };
+    $('#btn-lobby').onclick = () => { showView('lobby'); renderLobby(); };
+    window.scrollTo(0, 0);
+  }
+  function testTable(r) {
+    if (r.tests.compileError) return `<div class="compile-err" style="margin:0">${esc(r.tests.compileError)}</div>`;
+    const row = (x, kind) => `<div class="result ${x.pass ? 'pass' : 'fail'}"><span class="mark">${x.pass ? '✓' : '✕'}</span><span>${esc(x.name)} <span class="faint" style="font-size:12px">${kind}</span></span><span class="ms">${x.ms != null ? x.ms.toFixed(1) + ' ms' : ''}</span>${x.pass ? '' : `<div class="detail">${x.error ? `<span>${esc(x.error)}</span>` : `<span><em>expected </em>${esc(String(x.expected).slice(0, 300))}</span><span><em>received </em>${esc(String(x.got).slice(0, 300))}</span>`}</div>`}</div>`;
+    return `<div class="timeline" style="padding:0">${r.tests.visible.map(x => row(x, 'visible')).join('')}${r.tests.hidden.map(x => row(x, 'hidden')).join('')}</div>`;
+  }
+  function tokenChart(r) {
+    const W = 720, H = 220, L = 52, R = 16, T = 14, B = 30;
+    const endMin = Math.max(1, r.metrics.timeUsedMin);
+    const xMax = endMin <= 10 ? Math.max(2, Math.ceil(endMin)) : Math.ceil(endMin / 5) * 5;
+    const x = min => L + (min / xMax) * (W - L - R);
+    const y = tk => T + (1 - tk / r.budget) * (H - T - B);
+    const asst = r.turns.filter(t => t.role === 'assistant');
+    let cum = 0;
+    let path = `M${x(0)},${y(0)}`;
+    const dots = [];
+    for (const t of asst) {
+      const mn = t.t / 60000;
+      path += ` L${x(mn).toFixed(1)},${y(cum).toFixed(1)}`;
+      cum = Math.min(r.budget, cum + t.inTok + t.outTok);
+      path += ` L${x(mn).toFixed(1)},${y(cum).toFixed(1)}`;
+      dots.push(`<circle cx="${x(mn).toFixed(1)}" cy="${y(cum).toFixed(1)}" r="3.5" fill="var(--accent)"><title>Exchange ${t.n} at ${mmss(t.t)}: +${fmt(t.inTok + t.outTok)} (total ${fmt(cum)})</title></circle>`);
+    }
+    path += ` L${x(endMin).toFixed(1)},${y(cum).toFixed(1)}`;
+    const area = path + ` L${x(endMin).toFixed(1)},${y(0)} Z`;
+    const yt = [0, 0.25, 0.5, 0.75, 1].map(f => { const v = r.budget * f; return `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line-2)" stroke-width="1"></line><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--ink-3)">${kfmt(v)}</text>`; }).join('');
+    const step = xMax <= 10 ? 1 : xMax <= 30 ? 5 : 10;
+    let xt = '';
+    for (let mn = 0; mn <= xMax; mn += step) xt += `<text x="${x(mn)}" y="${H - 10}" text-anchor="middle" font-size="11" fill="var(--ink-3)">${mn}m</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative tokens used over time, ${fmt(r.used)} of ${fmt(r.budget)}">
+      ${yt}${xt}
+      <line x1="${L}" x2="${W - R}" y1="${y(r.budget)}" y2="${y(r.budget)}" stroke="var(--bad)" stroke-width="1.5" stroke-dasharray="5 4"></line>
+      <line x1="${x(endMin)}" x2="${x(endMin)}" y1="${T}" y2="${H - B}" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="3 3"></line>
+      <path d="${area}" fill="var(--accent-soft)" stroke="none"></path>
+      <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"></path>
+      ${dots.join('')}
+    </svg>`;
+  }
+
+  // ---------- Views, modal, toast ----------
+  function showView(name) {
+    ['lobby', 'session', 'eval', 'report'].forEach(v => { $('#view-' + v).hidden = v !== name; });
+    document.documentElement.style.overflow = name === 'session' ? 'hidden' : '';
+    if (name === 'session' && editor) setTimeout(() => editor.refresh(), 0);
+  }
+  let modalClose = null;
+  function openModal({ title, sub, body, actions, onOpen }) {
+    closeModal();
+    const root = $('#modal-root');
+    root.innerHTML = `<div class="modal-back"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head"><h2 id="modal-title">${esc(title)}</h2>${sub ? `<p class="muted">${esc(sub)}</p>` : ''}</div>
+      ${body ? `<div class="modal-body">${body}</div>` : ''}
+      <div class="modal-foot">${actions.map((a, i) => `<button class="btn ${a.kind === 'primary' ? 'btn-primary' : a.kind === 'danger' ? 'btn-danger' : ''}" data-mi="${i}"${a.id ? ` id="${a.id}"` : ''}${a.disabled ? ' disabled' : ''}>${esc(a.label)}</button>`).join('')}</div>
+    </div></div>`;
+    const back = root.firstElementChild;
+    back.addEventListener('click', e => {
+      if (e.target === back) { closeModal(); return; }
+      const b = e.target.closest('[data-mi]'); if (!b) return;
+      const a = actions[+b.dataset.mi];
+      if (!a.keepOpen) closeModal();
+      if (a.onClick) a.onClick();
+    });
+    const onKey = e => { if (e.key === 'Escape') closeModal(); };
+    document.addEventListener('keydown', onKey);
+    modalClose = () => document.removeEventListener('keydown', onKey);
+    if (onOpen) onOpen(); else { const p = back.querySelector('.btn-primary, .btn-danger'); if (p) p.focus(); }
+  }
+  function closeModal() { if (modalClose) { modalClose(); modalClose = null; } $('#modal-root').innerHTML = ''; }
+  let toastT = null;
+  function toast(text) {
+    const root = $('#toast-root');
+    root.innerHTML = `<div class="toast" role="status">${esc(text)}</div>`;
+    clearTimeout(toastT); toastT = setTimeout(() => { root.innerHTML = ''; }, 2600);
+  }
+
+  // Mobile pane tabs
+  function setMobileTab(id) {
+    $$('.workbench .pane').forEach(p => p.classList.toggle('m-active', p.id === id));
+    $$('[data-mtab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mtab === id)));
+    if (id === 'pane-editor' && editor) setTimeout(() => editor.refresh(), 0);
+  }
+  $$('[data-mtab]').forEach(b => b.onclick = () => setMobileTab(b.dataset.mtab));
+
+  $('#report').addEventListener('click', e => {
+    const b = e.target.closest('[data-cb="copy"]'); if (!b) return;
+    navigator.clipboard.writeText(codeStore.get(b.dataset.id) || '').then(() => toast('Copied to clipboard'), () => toast('Copy is blocked here. Select the code and copy it manually.'));
+  });
+  $('#btn-back-lobby').onclick = () => { showView('lobby'); renderLobby(); };
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && sess && sess.status === 'active' && !$('#view-session').hidden && document.activeElement !== $('#prompt')) { e.preventDefault(); runVisible(); }
+  });
+  window.addEventListener('beforeunload', () => { if (sess && sess.status === 'active') store.set(K_ACTIVE, sess); });
+
+  // ---------- Boot ----------
+  renderLobby();
+  showView('lobby');
+  initAgent();
+  // A resumed interview whose page was reloaded mid-submit: grade it now.
+  const pending = store.get(K_ACTIVE, null);
+  if (pending && pending.status === 'submitted') { sess = pending; sess.status = 'active'; mountEditor(sess.code); submit(false); }
+})();
+</script>
+
+</body>
+</html>

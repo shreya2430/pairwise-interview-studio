@@ -1,0 +1,173 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="mark" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="4" fill="var(--ink)"></rect><path d="M7 8.5 10 12l-3 3.5" fill="none" stroke="var(--bg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12.5 15.5H17" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"></path></symbol>
+  </defs>
+</svg>
+
+<!-- Lobby -->
+<section id="view-lobby" class="view">
+  <header class="lobby-top">
+    <div class="inner">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Interview practice</small></div>
+      <div class="spacer"></div>
+      <div class="agent-status" id="lobby-agent-status" data-mode="checking"><span class="dot"></span><span>Connecting to the assistant…</span></div>
+    </div>
+  </header>
+  <div class="lobby-wrap">
+    <div class="lobby-head">
+      <h1>AI-assisted coding interview</h1>
+      <p>Solve a production-style problem with a coding assistant beside you and a fixed token allowance. Every message you send spends tokens. When you submit, you get a scorecard on correctness and on how you worked with the assistant.</p>
+    </div>
+    <div id="resume-slot"></div>
+    <div class="lobby-grid">
+      <div>
+        <div class="section-title"><span>Choose a problem</span><span class="faint" id="problem-count"></span></div>
+        <div class="problem-list" id="problem-list" role="radiogroup" aria-label="Problem"></div>
+      </div>
+      <aside class="setup" aria-label="Interview setup">
+        <div class="setup-sec">
+          <label class="setup-label" for="cand-name"><span>Candidate name</span><span>Shown on the scorecard</span></label>
+          <input id="cand-name" class="field" type="text" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Token budget</span><span id="budget-note"></span></div>
+          <div class="seg" id="seg-budget" role="radiogroup" aria-label="Token budget"></div>
+          <p class="hint">Counts the text the assistant reads (instructions, problem, your message, any code you attach, recent history) plus its reply. About 4 characters per token.</p>
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Time limit</span><span id="time-note"></span></div>
+          <div class="seg" id="seg-time" role="radiogroup" aria-label="Time limit"></div>
+        </div>
+        <div class="setup-sec">
+          <div class="setup-label"><span>Assistant model</span><span id="tier-note"></span></div>
+          <div class="seg" id="seg-tier" role="radiogroup" aria-label="Assistant model"></div>
+        </div>
+        <div class="setup-sec" id="conn-sec" hidden>
+          <div class="setup-label"><span>Claude connection</span><span id="conn-state"></span></div>
+          <button class="btn" id="btn-key">Connect your API key</button>
+          <p class="hint" id="conn-note"></p>
+        </div>
+        <div class="setup-go">
+          <button class="btn btn-primary" id="btn-start">Start interview</button>
+          <p class="hint" id="start-note"></p>
+        </div>
+      </aside>
+    </div>
+    <div class="how" aria-label="How the session works">
+      <div><span class="step">Step 1</span><b>Read the brief</b><p>A realistic task from a product team, with visible tests and hidden ones.</p></div>
+      <div><span class="step">Step 2</span><b>Work with the assistant</b><p>Ask, plan, generate and review code. Watch the token gauge as you go.</p></div>
+      <div><span class="step">Step 3</span><b>Verify and submit</b><p>Run the visible tests as often as you like. Hidden tests run on submit.</p></div>
+      <div><span class="step">Step 4</span><b>Read your scorecard</b><p>Six rubric areas with evidence from your session, plus a replay of every exchange.</p></div>
+    </div>
+    <div>
+      <div class="section-title"><span>Past sessions</span><span class="faint">Stored in this browser only</span></div>
+      <div class="history" id="history"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Session -->
+<section id="view-session" class="view" hidden>
+  <header class="topbar">
+    <button class="btn btn-ghost btn-sm brief-toggle" id="btn-brief" style="display:none" aria-controls="pane-brief">Problem</button>
+    <div class="brand" title="Pairwise"><svg class="brand-mark"><use href="#mark"></use></svg></div>
+    <div class="tb-problem"><b id="tb-title"></b><span id="tb-sub"></span></div>
+    <div class="tb-spacer"></div>
+    <div class="gauge" id="gauge" aria-live="polite">
+      <div class="gauge-nums"><b id="g-left">0</b><span id="g-of"></span></div>
+      <div class="gauge-track" id="g-track" role="meter" aria-label="Tokens used"></div>
+    </div>
+    <div class="timer" id="timer"><b id="t-left">00:00</b><small>remaining</small></div>
+    <button class="btn" id="btn-run" title="Run visible tests (Ctrl/⌘ + Enter)"><span>Run<span class="label-long"> tests</span></span><span class="kbd label-long">⌘↵</span></button>
+    <button class="btn btn-primary" id="btn-submit">Submit</button>
+  </header>
+  <div class="workbench" id="workbench">
+    <div class="pane brief-pane" id="pane-brief">
+      <div class="pane-head" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-btab="brief">Problem</button>
+        <button class="tab" role="tab" aria-selected="false" data-btab="notes">Notes</button>
+        <span class="grow"></span>
+      </div>
+      <div class="pane-body" id="brief-body"></div>
+      <div class="pane-body" id="notes-body" hidden>
+        <div class="notes-wrap">
+          <p class="hint">Plan here before you prompt. Notes cost no tokens and count toward problem decomposition.</p>
+          <textarea id="notes" placeholder="Approach, edge cases, questions for the interviewer…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="pane editor-col m-active" id="pane-editor">
+      <div class="pane-head">
+        <div class="file-tab">solution.js <span class="lang">JavaScript</span></div>
+        <span class="grow"></span>
+        <span class="save-state" id="save-state"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-reset">Reset code</button>
+      </div>
+      <div class="editor-host" id="editor-host"></div>
+      <div class="console">
+        <div class="console-head" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-ctab="tests">Test results</button>
+          <button class="tab" role="tab" aria-selected="false" data-ctab="logs">Console</button>
+          <span class="grow"></span>
+          <span class="save-state" id="run-meta"></span>
+        </div>
+        <div class="console-body" id="console-tests"><p class="console-empty">Run the visible tests to see results here. Hidden tests run when you submit.</p></div>
+        <div class="console-body" id="console-logs" hidden><p class="console-empty">console.log output from your code appears here.</p></div>
+      </div>
+    </div>
+    <div class="pane agent-col" id="pane-agent">
+      <div class="pane-head">
+        <b style="font-size:13.5px;padding:0 6px">Assistant</b>
+        <span class="agent-badge" id="agent-badge" data-mode="checking"><span class="dot"></span><span id="agent-badge-text">Connecting…</span></span>
+        <span class="grow"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-key-agent" hidden>Connect Claude</button>
+      </div>
+      <div class="pane-body" id="thread-scroll"><div class="thread" id="thread"></div></div>
+      <div class="composer" id="composer">
+        <div class="ctx-row"><span>Attach</span>
+          <button class="toggle" id="ctx-code" aria-pressed="true">Current code <small id="ctx-code-n"></small></button>
+          <button class="toggle" id="ctx-tests" aria-pressed="false">Last test run <small id="ctx-tests-n"></small></button>
+          <button class="toggle" id="ctx-hist" aria-pressed="true">History <small id="ctx-hist-n"></small></button>
+        </div>
+        <textarea id="prompt" placeholder="Ask the assistant. Enter to send, Shift + Enter for a new line."></textarea>
+        <div class="composer-foot">
+          <div class="cost" id="cost"></div>
+          <button class="btn btn-sm" id="btn-stop" hidden>Stop</button>
+          <button class="btn btn-primary btn-sm" id="btn-send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="mobile-tabs" role="tablist" aria-label="Panels">
+    <button role="tab" data-mtab="pane-brief" aria-selected="false">Problem</button>
+    <button role="tab" data-mtab="pane-editor" aria-selected="true">Code</button>
+    <button role="tab" data-mtab="pane-agent" aria-selected="false">Assistant</button>
+  </nav>
+</section>
+
+<!-- Evaluating -->
+<section id="view-eval" class="view" hidden>
+  <div class="eval-wrap">
+    <div class="eval-card">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise</div>
+      <h2>Submitted. Scoring your session.</h2>
+      <div class="eval-steps" id="eval-steps"></div>
+      <p class="hint" id="eval-note">The written assessment usually takes 20 to 60 seconds.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Report -->
+<section id="view-report" class="view" hidden>
+  <header class="lobby-top">
+    <div class="inner">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Scorecard</small></div>
+      <div class="spacer"></div>
+      <button class="btn btn-sm" id="btn-back-lobby">All problems</button>
+    </div>
+  </header>
+  <div class="report-wrap" id="report"></div>
+</section>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
