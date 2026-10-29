@@ -1,6 +1,14 @@
-// Runs every test against a reference solution, and confirms the starter code fails.
-const PROBLEMS = require('../src/problems.js');
-const REF = {
+// Checks every problem: schema, reference solution passes all tests, starter does not.
+// Usage: node scripts/verify-problems.js [problem-id]
+const fs = require('fs');
+const path = require('path');
+const SRC = path.join(__dirname, '..', 'src');
+const files = [path.join(SRC, 'problems.js')]
+  .concat(fs.readdirSync(path.join(SRC, 'problems')).filter(f => f.endsWith('.js')).sort().map(f => path.join(SRC, 'problems', f)))
+  .concat([path.join(SRC, 'problems-finalize.js')]);
+const PROBLEMS = new Function(files.map(f => fs.readFileSync(f, 'utf8')).join('\n;\n') + '\n;return PROBLEMS;')();
+// Minified fallbacks for problems that do not carry a readable `solution` yet.
+const LEGACY_REF = {
   'rate-limiter': `class RateLimiter{constructor(l,w){this.l=l;this.w=w;this.m=new Map()}
 _q(id,t){let q=this.m.get(id);if(!q){q=[];this.m.set(id,q)}while(q.length&&q[0]<=t-this.w)q.shift();return q}
 allow(id,t){const q=this._q(id,t);if(q.length<this.l){q.push(t);return true}return false}
@@ -25,19 +33,50 @@ for(const l of lines){const m=re.exec(l.trim());if(!m)continue;const path=m[2].s
 const res=[];for(const[e,a]of g){a.sort((x,y)=>x-y);res.push({endpoint:e,p95:a[Math.ceil(0.95*a.length)-1],count:a.length})}
 res.sort((x,y)=>y.p95-x.p95||(x.endpoint<y.endpoint?-1:x.endpoint>y.endpoint?1:0));return res.slice(0,k)}`,
 };
-const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
 const run = (code, tests) => {
-  const runner = new Function('__tests', code + '\n;return __tests.map(function(__t){ try { var r = eval("(function(){" + __t.src + "\\n})")(); return { name: __t.name, pass: JSON.stringify(r[0]) === JSON.stringify(r[1]), got: JSON.stringify(r[0]), exp: JSON.stringify(r[1]) }; } catch (e) { return { name: __t.name, pass: false, got: "ERR " + e.message }; } });');
+  const runner = new Function('__tests', code + '\n;return __tests.map(function(__t){ var s = Date.now(); try { var r = eval("(function(){" + __t.src + "\\n})")(); return { name: __t.name, pass: JSON.stringify(r[0]) === JSON.stringify(r[1]), got: JSON.stringify(r[0]), exp: JSON.stringify(r[1]), ms: Date.now() - s }; } catch (e) { return { name: __t.name, pass: false, got: "ERR " + e.message, ms: Date.now() - s }; } });');
   return runner(tests);
 };
+const LEVELS = ['New grad', 'Mid-level', 'Senior'];
+const only = process.argv[2];
+const ids = new Set();
 let bad = 0;
+const fail = (id, msg) => { bad++; console.log('  FAIL', id, msg); };
 for (const p of PROBLEMS) {
+  if (ids.has(p.id)) fail(p.id, 'duplicate id');
+  ids.add(p.id);
+  if (only && p.id !== only) continue;
+  for (const k of ['id', 'title', 'team', 'difficulty', 'scenario', 'body', 'examples', 'starter', 'rubric']) if (typeof p[k] !== 'string' || !p[k].trim()) fail(p.id, 'missing ' + k);
+  if (!LEVELS.includes(p.level)) fail(p.id, 'level must be one of ' + LEVELS.join(', '));
+  if (!['Easy', 'Medium', 'Hard'].includes(p.difficulty)) fail(p.id, 'bad difficulty');
+  if (!(p.minutes > 0)) fail(p.id, 'missing minutes');
+  for (const k of ['focus', 'constraints', 'followUps']) if (!Array.isArray(p[k]) || !p[k].length) fail(p.id, 'missing ' + k);
+  const o = p.offline || {};
+  if (!o.approach || !Array.isArray(o.hints) || !Array.isArray(o.edge) || !o.complexity || !o.skeleton) fail(p.id, 'incomplete offline block');
+  const multi = p.parts.length > 1;
+  p.parts.forEach((pt, i) => {
+    if (multi && (!pt.title || !pt.body)) fail(p.id, 'part ' + (i + 1) + ' needs title and body');
+    if (!pt.tests.length) fail(p.id, 'part ' + (i + 1) + ' has no visible tests');
+    if (!pt.hidden.length) fail(p.id, 'part ' + (i + 1) + ' has no hidden tests');
+  });
+  const names = p.tests.concat(p.hidden).map(t => t.name);
+  if (new Set(names).size !== names.length) fail(p.id, 'duplicate test names');
+  const sol = p.solution || LEGACY_REF[p.id];
+  if (!sol) { fail(p.id, 'no reference solution'); continue; }
+  const all = p.tests.concat(p.hidden);
   const t0 = Date.now();
-  const ref = run(REF[p.id], [...p.tests, ...p.hidden]);
+  let ref;
+  try { ref = run(sol, all); } catch (e) { fail(p.id, 'solution does not load: ' + e.message); continue; }
   const ms = Date.now() - t0;
-  for (const r of ref) if (!r.pass) { bad++; console.log('REF FAIL', p.id, r.name, 'got', r.got, 'exp', r.exp); }
-  let starterPass = 0;
-  try { starterPass = run(p.starter, [...p.tests, ...p.hidden]).filter(r => r.pass).length; } catch (e) { starterPass = 'compile err ' + e.message; }
-  console.log(p.id.padEnd(16), 'ref', ref.filter(r => r.pass).length + '/' + ref.length, ms + 'ms', '| starter passes', starterPass);
+  ref.forEach(r => { if (!r.pass) fail(p.id, 'reference fails "' + r.name + '" got ' + r.got + ' expected ' + r.exp); });
+  const slow = ref.filter(r => r.ms > 1500);
+  slow.forEach(r => fail(p.id, 'reference too slow on "' + r.name + '" (' + r.ms + ' ms)'));
+  let starter;
+  try { starter = run(p.starter, p.parts[0].tests).filter(r => r.pass).length; } catch (e) { starter = 0; }
+  if (starter === p.parts[0].tests.length) fail(p.id, 'starter already passes every part 1 visible test');
+  console.log(p.id.padEnd(18), (p.level || '?').padEnd(9), 'parts', p.parts.length, '| ref', ref.filter(r => r.pass).length + '/' + ref.length, ms + 'ms', '| starter passes', starter + '/' + p.parts[0].tests.length, 'of part 1', p.solution ? '' : '(legacy ref)');
 }
+if (only && !ids.has(only)) { console.log('No problem with id', only); bad++; }
+console.log(bad ? bad + ' problem(s) found' : 'All checks passed');
 process.exit(bad ? 1 : 0);

@@ -11,6 +11,7 @@
       <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Interview practice</small></div>
       <div class="spacer"></div>
       <div class="agent-status" id="lobby-agent-status" data-mode="checking"><span class="dot"></span><span>Connecting to the assistant…</span></div>
+      <button class="btn btn-sm" id="btn-progress">Your progress</button>
     </div>
   </header>
   <div class="lobby-wrap">
@@ -22,6 +23,7 @@
     <div class="lobby-grid">
       <div>
         <div class="section-title"><span>Choose a problem</span><span class="faint" id="problem-count"></span></div>
+        <div class="seg seg-level" id="seg-level" role="radiogroup" aria-label="Level"></div>
         <div class="problem-list" id="problem-list" role="radiogroup" aria-label="Problem"></div>
       </div>
       <aside class="setup" aria-label="Interview setup">
@@ -145,6 +147,18 @@
   </nav>
 </section>
 
+<!-- Progress -->
+<section id="view-progress" class="view" hidden>
+  <header class="lobby-top">
+    <div class="inner">
+      <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Progress</small></div>
+      <div class="spacer"></div>
+      <button class="btn btn-sm" id="btn-progress-back">All problems</button>
+    </div>
+  </header>
+  <div class="report-wrap" id="progress"></div>
+</section>
+
 <!-- Evaluating -->
 <section id="view-eval" class="view" hidden>
   <div class="eval-wrap">
@@ -163,6 +177,7 @@
     <div class="inner">
       <div class="brand"><svg class="brand-mark"><use href="#mark"></use></svg>Pairwise <small>Scorecard</small></div>
       <div class="spacer"></div>
+      <button class="btn btn-sm btn-ghost" id="btn-report-progress">Your progress</button>
       <button class="btn btn-sm" id="btn-back-lobby">All problems</button>
     </div>
   </header>

@@ -4,9 +4,11 @@ const PROBLEMS = [
     id: 'rate-limiter',
     title: 'Sliding-window rate limiter',
     team: 'API Platform',
+    level: 'Mid-level',
     difficulty: 'Medium',
     minutes: 40,
     focus: ['Data structures', 'Design'],
+    format: 'Single-part data-structure design task with hidden boundary and scale tests.',
     scenario: 'Partners are hammering the public Orders API during flash sales. You own the gateway that decides, per API key, whether a request goes through.',
     body: `
 <p>Implement <code>RateLimiter</code>. A client may make at most <code>limit</code> successful requests in any rolling window of <code>windowMs</code> milliseconds.</p>
@@ -99,14 +101,58 @@ return [c, 20000];` },
   }
 }`,
     },
+    solution: `class RateLimiter {
+  /**
+   * @param {number} limit     max allowed requests per window
+   * @param {number} windowMs  window length in milliseconds
+   */
+  constructor(limit, windowMs) {
+    this.limit = limit;
+    this.windowMs = windowMs;
+    this.clients = new Map(); // clientId -> { times: allowed timestamps, head: index of the oldest live one }
+  }
+
+  // Drop timestamps outside (timestamp - windowMs, timestamp] and return the client's queue.
+  _window(clientId, timestamp) {
+    let q = this.clients.get(clientId);
+    if (!q) {
+      q = { times: [], head: 0 };
+      this.clients.set(clientId, q);
+    }
+    while (q.head < q.times.length && q.times[q.head] <= timestamp - this.windowMs) q.head++;
+    // Compact now and then so the array does not grow forever.
+    if (q.head > 1024 && q.head * 2 > q.times.length) {
+      q.times = q.times.slice(q.head);
+      q.head = 0;
+    }
+    return q;
+  }
+
+  allow(clientId, timestamp) {
+    const q = this._window(clientId, timestamp);
+    if (q.times.length - q.head >= this.limit) return false; // rejected requests are not recorded
+    q.times.push(timestamp);
+    return true;
+  }
+
+  retryAfter(clientId, timestamp) {
+    const q = this._window(clientId, timestamp);
+    if (q.times.length - q.head < this.limit) return 0;
+    // The oldest allowed request leaves the window at oldest + windowMs.
+    return q.times[q.head] + this.windowMs - timestamp;
+  }
+}
+`,
   },
   {
     id: 'ttl-cache',
     title: 'LRU cache with expiry',
     team: 'Edge Caching',
+    level: 'Senior',
     difficulty: 'Hard',
     minutes: 45,
     focus: ['Data structures', 'Edge cases'],
+    format: 'Single-part class design task with tricky eviction rules and a hidden high-volume test.',
     scenario: 'The product-detail service caches pricing at the edge. Prices expire, and the box has a hard memory cap, so the cache needs both TTLs and LRU eviction.',
     body: `
 <p>Implement <code>TTLCache</code> with a fixed <code>capacity</code>. Every operation receives the current time <code>now</code> in milliseconds.</p>
@@ -205,14 +251,61 @@ return [hits, 29718];` },
   }
 }`,
     },
+    solution: `class TTLCache {
+  /** @param {number} capacity */
+  constructor(capacity) {
+    this.capacity = capacity;
+    // A Map keeps insertion order: the first key is the least recently used.
+    this.entries = new Map(); // key -> { value, expiresAt }
+  }
+
+  get(key, now) {
+    const e = this.entries.get(key);
+    if (!e) return -1;
+    if (now >= e.expiresAt) {
+      this.entries.delete(key); // expired reads do not count as a use
+      return -1;
+    }
+    // Move to the most recently used end.
+    this.entries.delete(key);
+    this.entries.set(key, e);
+    return e.value;
+  }
+
+  put(key, value, ttlMs, now) {
+    if (this.entries.has(key)) {
+      // Updating an existing key never evicts anything.
+      this.entries.delete(key);
+    } else if (this.entries.size >= this.capacity) {
+      // New key in a full cache: purge expired entries first...
+      for (const [k, e] of this.entries) {
+        if (now >= e.expiresAt) this.entries.delete(k);
+      }
+      // ...then fall back to evicting the least recently used one.
+      if (this.entries.size >= this.capacity) {
+        this.entries.delete(this.entries.keys().next().value);
+      }
+    }
+    this.entries.set(key, { value, expiresAt: now + ttlMs });
+  }
+
+  size(now) {
+    let live = 0;
+    for (const e of this.entries.values()) if (now < e.expiresAt) live++;
+    return live;
+  }
+}
+`,
   },
   {
     id: 'free-slots',
     title: 'Find common free time',
     team: 'Calendar',
+    level: 'New grad',
     difficulty: 'Medium',
     minutes: 35,
     focus: ['Intervals', 'Parsing'],
+    format: 'Single-part algorithm task (interval merging) with hidden edge-case tests.',
     scenario: 'The "Find a time" button in the team calendar suggests meeting slots. Product wants every gap where all attendees are free for at least the requested length.',
     body: `
 <p>Write <code>findFreeSlots(calendars, workday, durationMin)</code>.</p>
@@ -286,14 +379,50 @@ return [findFreeSlots(cals, ['09:00', '18:00'], 20), want];` },
   return free;
 }`,
     },
+    solution: `/**
+ * @param {string[][][]} calendars  busy intervals per attendee
+ * @param {string[]} workday        ["HH:MM", "HH:MM"]
+ * @param {number} durationMin
+ * @returns {string[][]}            free intervals
+ */
+function findFreeSlots(calendars, workday, durationMin) {
+  const toMin = t => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+  const toTime = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+
+  const dayStart = toMin(workday[0]);
+  const dayEnd = toMin(workday[1]);
+
+  // Anyone busy blocks the slot, so all calendars can be merged into one list.
+  // Clip to the workday and drop intervals that end up empty.
+  const busy = calendars
+    .flat()
+    .map(([a, b]) => [Math.max(toMin(a), dayStart), Math.min(toMin(b), dayEnd)])
+    .filter(([a, b]) => a < b)
+    .sort((x, y) => x[0] - y[0]);
+
+  const free = [];
+  let cursor = dayStart; // everything before cursor is accounted for
+  for (const [start, end] of busy) {
+    if (start - cursor >= durationMin) free.push([toTime(cursor), toTime(start)]);
+    cursor = Math.max(cursor, end); // nested meetings must not move the cursor back
+  }
+  if (dayEnd - cursor >= durationMin) free.push([toTime(cursor), toTime(dayEnd)]);
+  return free;
+}
+`,
   },
   {
     id: 'reconcile',
     title: 'Fix the payment reconciliation job',
     team: 'Finance Engineering',
+    level: 'Mid-level',
     difficulty: 'Medium',
     minutes: 30,
     focus: ['Debugging', 'Money handling'],
+    format: 'Fix-the-bug code review task: debug a handed-over implementation against a written spec.',
     scenario: 'Last night’s finance report flagged 312 orders as unpaid that customers had paid. The job was written in a hurry. Find and fix every bug in the code you were handed.',
     body: `
 <p>The editor already contains <code>reconcile(orders, payments)</code>. It runs, but it gets several cases wrong. Fix it so it meets this spec:</p>
@@ -379,14 +508,50 @@ return [[r.paid.length, r.unpaid.length, r.overpaid.length, r.unmatchedPayments.
   return result;
 }`,
     },
+    solution: `// Nightly job: match payments to orders for the finance report.
+function reconcile(orders, payments) {
+  // Work in integer cents so 0.1 * 10 compares equal to 1.00.
+  const cents = x => Math.round(x * 100);
+
+  // Sum every payment (refunds are negative) per case-insensitive order id.
+  const received = new Map(); // ORDER-ID -> cents
+  for (const p of payments) {
+    const key = p.orderId.toUpperCase();
+    received.set(key, (received.get(key) || 0) + cents(p.amount));
+  }
+
+  const result = { paid: [], unpaid: [], overpaid: [], unmatchedPayments: [] };
+  const known = new Set();
+  for (const o of orders) {
+    const key = o.id.toUpperCase();
+    known.add(key);
+    const got = received.get(key) || 0;
+    const due = cents(o.total);
+    // Keep the order id exactly as written in orders.
+    if (got === due) result.paid.push(o.id);
+    else if (got > due) result.overpaid.push(o.id);
+    else result.unpaid.push(o.id);
+  }
+
+  // Map keys are already uppercase and unique.
+  for (const key of received.keys()) {
+    if (!known.has(key)) result.unmatchedPayments.push(key);
+  }
+
+  for (const list of Object.values(result)) list.sort();
+  return result;
+}
+`,
   },
   {
     id: 'install-order',
     title: 'Package install order',
     team: 'Developer Tools',
+    level: 'Mid-level',
     difficulty: 'Medium',
     minutes: 35,
     focus: ['Graphs', 'Determinism'],
+    format: 'Single-part graph algorithm task with a determinism requirement and hidden scale tests.',
     scenario: 'The internal package manager installs dependencies in parallel today, and builds are flaky. You are making installs sequential and reproducible.',
     body: `
 <p>Write <code>installOrder(packages)</code>. <code>packages</code> maps a package name to the names it depends on.</p>
@@ -459,14 +624,69 @@ return [[out.length, out[0], out[19999]], [20000, 'p00000', 'p19999']];` },
   return order;
 }`,
     },
+    solution: `/**
+ * @param {Record<string, string[]>} packages
+ * @returns {string[]} install order
+ */
+function installOrder(packages) {
+  // Every package, including dependencies that are never declared as keys.
+  const names = new Set(Object.keys(packages));
+  for (const deps of Object.values(packages)) deps.forEach(d => names.add(d));
+
+  const indegree = new Map();   // package -> number of unique dependencies left
+  const dependents = new Map(); // dependency -> packages waiting on it
+  for (const n of names) {
+    indegree.set(n, 0);
+    dependents.set(n, []);
+  }
+  for (const [pkg, deps] of Object.entries(packages)) {
+    for (const d of new Set(deps)) { // duplicates count once
+      indegree.set(pkg, indegree.get(pkg) + 1);
+      dependents.get(d).push(pkg);
+    }
+  }
+
+  // Kahn's algorithm, always taking the alphabetically smallest ready package.
+  // The ready list is kept sorted descending so pop() returns the smallest.
+  const ready = [...names].filter(n => indegree.get(n) === 0).sort().reverse();
+  const insertReady = name => {
+    let lo = 0, hi = ready.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (ready[mid] > name) lo = mid + 1;
+      else hi = mid;
+    }
+    ready.splice(lo, 0, name);
+  };
+
+  const order = [];
+  while (ready.length) {
+    const pkg = ready.pop();
+    order.push(pkg);
+    for (const next of dependents.get(pkg)) {
+      indegree.set(next, indegree.get(next) - 1);
+      if (indegree.get(next) === 0) insertReady(next);
+    }
+  }
+
+  // Anything left over is stuck on a cycle (self-dependencies included).
+  if (order.length !== names.size) {
+    const stuck = [...names].filter(n => indegree.get(n) > 0).sort();
+    throw new Error('Cycle detected among: ' + stuck.join(', '));
+  }
+  return order;
+}
+`,
   },
   {
     id: 'slow-endpoints',
     title: 'Slowest endpoints from access logs',
     team: 'Observability',
+    level: 'New grad',
     difficulty: 'Easy',
     minutes: 30,
     focus: ['Parsing', 'Aggregation'],
+    format: 'Single-part parsing and aggregation task with hidden malformed-input and scale tests.',
     scenario: 'On-call wants a quick report of which endpoints regressed after yesterday’s deploy. All you have is raw gateway access logs.',
     body: `
 <p>Write <code>slowestEndpoints(lines, k)</code>. Each line looks like:</p>
@@ -533,7 +753,40 @@ return [r, [{endpoint:'GET /api/items/:id',p95:949,count:500000}]];` },
   return rows;
 }`,
     },
+    solution: `/**
+ * @param {string[]} lines  raw access-log lines
+ * @param {number} k
+ * @returns {{endpoint: string, p95: number, count: number}[]}
+ */
+function slowestEndpoints(lines, k) {
+  // timestamp, method, path, status, latency in ms. Anything else is skipped.
+  const LINE = /^\\S+\\s+([A-Z]+)\\s+(\\S+)\\s+(\\d{3})\\s+(\\d+)ms$/;
+  const samples = new Map(); // "GET /api/orders/:id" -> [ms, ...]
+
+  for (const line of lines) {
+    const m = LINE.exec(line.trim());
+    if (!m) continue;
+    const path = m[2]
+      .split('?')[0]                                   // drop the query string
+      .split('/')
+      .map(seg => (/^\\d+$/.test(seg) ? ':id' : seg))   // only all-digit segments
+      .join('/');
+    const endpoint = m[1] + ' ' + path;
+    if (!samples.has(endpoint)) samples.set(endpoint, []);
+    samples.get(endpoint).push(Number(m[4]));
+  }
+
+  const rows = [];
+  for (const [endpoint, ms] of samples) {
+    ms.sort((a, b) => a - b); // numeric sort, not the default string sort
+    const p95 = ms[Math.ceil(0.95 * ms.length) - 1]; // nearest rank, 1-based
+    rows.push({ endpoint, p95, count: ms.length });
+  }
+
+  rows.sort((a, b) => b.p95 - a.p95 || (a.endpoint < b.endpoint ? -1 : a.endpoint > b.endpoint ? 1 : 0));
+  return rows.slice(0, k);
+}
+`,
   },
 ];
 
-if (typeof module !== 'undefined') module.exports = PROBLEMS;

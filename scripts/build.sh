@@ -15,7 +15,7 @@ mkdir -p build
   echo '<style>'; cat src/vendor/codemirror-5.65.16.min.css; echo; cat src/style.css; echo '</style>'
   cat src/body.html
   for f in codemirror.min.js mode/javascript/javascript.min.js addon/edit/closebrackets.min.js addon/edit/matchbrackets.min.js; do echo "<script src=\"$CM/$f\"></script>"; done
-  echo '<script>'; cat src/problems.js; echo '</script>'
+  echo '<script>'; cat src/problems.js; for f in src/problems/*.js; do [ -f "$f" ] && { echo; cat "$f"; }; done; echo; cat src/problems-finalize.js; echo '</script>'
   echo '<script>'; cat src/app.js; echo '</script>'
 } > build/artifact.html
 {

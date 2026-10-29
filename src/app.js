@@ -48,6 +48,9 @@
     strong_hire: 'Strong hire', hire: 'Hire', lean_hire: 'Lean hire', lean_no_hire: 'Lean no hire', no_hire: 'No hire',
   };
   const SCORE_WORDS = { 1: 'Below bar', 2: 'Mixed', 3: 'Meets bar', 4: 'Exceeds' };
+  const LEVELS = ['New grad', 'Mid-level', 'Senior'];
+  const byLevel = list => list.map((p, i) => [p, i]).sort((a, b) => LEVELS.indexOf(a[0].level) - LEVELS.indexOf(b[0].level) || a[1] - b[1]).map(x => x[0]);
+  const levelClass = l => 'lv-' + String(l || '').toLowerCase().replace(/[^a-z]+/g, '');
   const MAX_HISTORY_TURNS = 8;
   // Outside claude.ai, visitors connect Claude with their own Anthropic API key.
   const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.133.0/+esm';
@@ -61,7 +64,7 @@
   const NO_KEY_REASON = 'Claude is not connected, so the built-in practice assistant is answering. Connect your Anthropic API key to use Claude.';
 
   // ---------- App state ----------
-  const prefs = Object.assign({ problemId: PROBLEMS[0].id, budget: 10000, duration: 45, tier: 'default', name: '' }, store.get(K_PREFS, {}));
+  const prefs = Object.assign({ problemId: PROBLEMS[0].id, budget: 10000, duration: 45, tier: 'default', name: '', level: 'All' }, store.get(K_PREFS, {}));
   let sess = null;           // active session
   let editor = null;         // editor adapter
   let sample = null;         // Claude sampling function, or null
@@ -224,8 +227,11 @@
 
   // ---------- Lobby ----------
   function renderLobby() {
-    $('#problem-count').textContent = PROBLEMS.length + ' problems';
-    $('#problem-list').innerHTML = PROBLEMS.map(p => `
+    const shown = byLevel(PROBLEMS).filter(p => prefs.level === 'All' || p.level === prefs.level);
+    $('#problem-count').textContent = shown.length === PROBLEMS.length ? PROBLEMS.length + ' problems' : shown.length + ' of ' + PROBLEMS.length + ' problems';
+    renderSeg('#seg-level', ['All'].concat(LEVELS).map(l => ({ v: l, html: l === 'All' ? 'All levels' : l })), prefs.level, v => { prefs.level = v; savePrefs(); renderLobby(); });
+    if (!shown.some(p => p.id === prefs.problemId) && shown.length) { prefs.problemId = shown[0].id; savePrefs(); }
+    $('#problem-list').innerHTML = shown.map(p => `
       <button class="problem-row" role="radio" aria-checked="${p.id === prefs.problemId}" data-pid="${p.id}">
         <span class="radio" aria-hidden="true"></span>
         <span class="pr-main">
@@ -233,7 +239,7 @@
           <span class="pr-scn">${esc(p.scenario)}</span>
           <span class="pr-tags">${p.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</span>
         </span>
-        <span class="pr-side"><span class="chip ${p.difficulty.toLowerCase()}">${p.difficulty}</span><span class="num">~${p.minutes} min</span><span class="num">${p.tests.length} + ${p.hidden.length} tests</span></span>
+        <span class="pr-side"><span class="chip level ${levelClass(p.level)}">${esc(p.level)}</span><span class="chip ${p.difficulty.toLowerCase()}">${p.difficulty}</span><span class="num">~${p.minutes} min</span><span class="num">${p.parts.length > 1 ? p.parts.length + ' parts · ' : ''}${p.tests.length} + ${p.hidden.length} tests</span></span>
       </button>`).join('');
     renderSeg('#seg-budget', BUDGETS.map(b => ({ v: b.v, html: `${b.label}<small>${b.note}</small>` })), prefs.budget, v => { prefs.budget = v; savePrefs(); renderSetupNotes(); });
     renderSeg('#seg-time', DURATIONS.map(d => ({ v: d.v, html: d.label })), prefs.duration, v => { prefs.duration = v; savePrefs(); renderSetupNotes(); });
@@ -285,7 +291,7 @@
     const h = store.get(K_HISTORY, []);
     const host = $('#history');
     if (!h.length) { host.innerHTML = '<p class="history-empty">No sessions yet. Your scorecards will be listed here after you submit.</p>'; return; }
-    host.innerHTML = h.map((r, i) => `
+    host.innerHTML = h.slice(0, 15).map((r, i) => `
       <button class="history-row" data-hi="${i}">
         <span><b>${esc(r.title)}</b><br><span class="faint" style="font-size:12.5px">${new Date(r.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}${r.name ? ' · ' + esc(r.name) : ''}</span></span>
         <span class="h-hide muted num" style="font-size:13px">${fmt(r.used)} / ${kfmt(r.budget)} tokens · ${r.testsPassed}/${r.testsTotal} tests</span>
@@ -325,8 +331,9 @@
       title: 'Before you begin',
       sub: P.title + ' · ' + P.team,
       body: `
-        <div class="modal-facts"><div><small>Time limit</small><b>${prefs.duration} min</b></div><div><small>Token budget</small><b>${fmt(prefs.budget)}</b></div><div><small>Tests</small><b>${P.tests.length} visible, ${P.hidden.length} hidden</b></div></div>
+        <div class="modal-facts"><div><small>Time limit</small><b>${prefs.duration} min</b></div><div><small>Token budget</small><b>${fmt(prefs.budget)}</b></div><div><small>${P.parts.length > 1 ? 'Parts' : 'Tests'}</small><b>${P.parts.length > 1 ? P.parts.length + ' parts' : P.tests.length + ' visible, ' + P.hidden.length + ' hidden'}</b></div></div>
         <ul>
+          ${P.parts.length > 1 ? `<li><b>This problem comes in ${P.parts.length} parts.</b> You see Part 1 first. When all visible tests for your current part pass, you can continue to the next one. Hidden tests for every part run on submit, so how far you get counts.</li>` : ''}
           <li><b>Use the assistant however you like.</b> You are assessed on how you direct and check its work, as well as on the final code.</li>
           <li><b>Every message spends tokens:</b> the instructions and problem, your message, whatever you attach, recent history and the reply. A reply that would overrun the budget is cut off.</li>
           <li><b>Run the visible tests anytime.</b> Hidden tests, including large inputs, run when you submit.</li>
@@ -347,7 +354,7 @@
       id: uid(), problemId: P.id, budget: prefs.budget, duration: prefs.duration, tier: prefs.tier, name: (prefs.name || '').trim(),
       startedAt: now, endsAt: now + prefs.duration * 60000, code: P.starter, notes: '', used: 0,
       turns: [], events: [{ t: 0, type: 'start', text: 'Interview started' }], runs: [], lastRun: null,
-      ctx: { code: true, tests: false, hist: true }, offlineHint: 0, status: 'active', agentModes: [],
+      ctx: { code: true, tests: false, hist: true }, offlineHint: 0, status: 'active', agentModes: [], part: 0,
     };
   }
   function startSession(existing) {
@@ -355,7 +362,8 @@
     showView('session');
     const P = problem(sess.problemId);
     $('#tb-title').textContent = P.title;
-    $('#tb-sub').textContent = P.team + ' · ' + P.difficulty + ' · Session ' + sess.id;
+    sess.part = sess.part || 0;
+    $('#tb-sub').textContent = P.team + ' · ' + P.level + ' · ' + P.difficulty + ' · Session ' + sess.id;
     renderBrief(P);
     $('#notes').value = sess.notes || '';
     mountEditor(sess.code);
@@ -388,17 +396,41 @@
   }
 
   // ---------- Problem brief ----------
+  const curPart = () => (sess && sess.part) || 0;
+  const unlockedTests = P => P.tests.filter(t => t.part <= curPart());
   function renderBrief(P) {
+    const multi = P.parts.length > 1;
+    const k = curPart();
+    const partsHTML = multi ? `<section class="parts">${P.parts.map((pt, i) => i <= k
+      ? `<div class="part${i === k ? ' current' : ' done'}"><h3><span class="part-n">${i < k ? '✓' : i + 1}</span>${esc(pt.title)}</h3><div class="brief-body">${pt.body}</div></div>`
+      : `<div class="part locked"><h3><span class="part-n">${i + 1}</span>Part ${i + 1}</h3><p class="faint">Unlocks when every visible test for Part ${i} passes.</p></div>`).join('')}</section>` : '';
+    const vis = unlockedTests(P);
+    const hiddenNote = multi ? P.hidden.length + ' hidden tests across all ' + P.parts.length + ' parts run when you submit' : P.hidden.length + ' hidden tests run when you submit';
     $('#brief-body').innerHTML = `<div class="brief">
       <div style="display:grid;gap:8px"><h2>${esc(P.title)}</h2>
-      <div class="brief-meta"><span class="chip ${P.difficulty.toLowerCase()}">${P.difficulty}</span><span class="chip">${esc(P.team)}</span>${P.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div></div>
+      <div class="brief-meta"><span class="chip level ${levelClass(P.level)}">${esc(P.level)}</span><span class="chip ${P.difficulty.toLowerCase()}">${P.difficulty}</span><span class="chip">${esc(P.team)}</span>${P.focus.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div></div>
       <p class="scenario">${esc(P.scenario)}</p>
+      ${P.format ? `<p class="format-note">${esc(P.format)}</p>` : ''}
       <div class="brief-body">${P.body}</div>
+      ${partsHTML}
       <section><h3>Example</h3><pre class="example">${esc(P.examples)}</pre></section>
       <section><h3>Constraints</h3><ul class="constraints">${P.constraints.map(c => `<li>${esc(c)}</li>`).join('')}</ul></section>
-      <section><h3>Tests</h3><div class="test-list">${P.tests.map(t => `<div><span class="dot faint"></span>${esc(t.name)}</div>`).join('')}<div class="hidden-note"><span class="dot"></span>${P.hidden.length} hidden tests run when you submit</div></div></section>
+      <section><h3>Tests</h3><div class="test-list">${vis.map(t => `<div><span class="dot faint"></span>${multi ? '<span class="faint">P' + (t.part + 1) + '</span> ' : ''}${esc(t.name)}</div>`).join('')}<div class="hidden-note"><span class="dot"></span>${hiddenNote}</div></div></section>
       <details class="followups"><summary>Questions your interviewer may ask</summary><ul>${P.followUps.map(f => `<li>${esc(f)}</li>`).join('')}</ul></details>
     </div>`;
+  }
+  function advancePart() {
+    const P = problem(sess.problemId);
+    if (curPart() >= P.parts.length - 1) return;
+    sess.part = curPart() + 1;
+    logEvent('part', 'Unlocked ' + (/^part \d/i.test(P.parts[sess.part].title) ? P.parts[sess.part].title : 'Part ' + (sess.part + 1) + ': ' + P.parts[sess.part].title));
+    renderBrief(P);
+    renderConsole();
+    renderCost();
+    toast('Part ' + (sess.part + 1) + ' unlocked. Read the new requirements in the problem pane.');
+    if (window.matchMedia('(max-width: 760px)').matches) setMobileTab('pane-brief');
+    else $('#workbench').classList.add('show-brief');
+    const cur = $('#brief-body .part.current'); if (cur) cur.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
   $$('[data-btab]').forEach(b => b.onclick = () => {
     $$('[data-btab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
@@ -535,10 +567,11 @@
     const btn = $('#btn-run'); btn.disabled = true;
     $('#run-meta').textContent = 'Running…';
     const P = problem(sess.problemId);
-    const r = await runTests(editor.get(), P.tests, 6000);
+    const tests = unlockedTests(P);
+    const r = await runTests(editor.get(), tests, 6000);
     running = false; btn.disabled = false;
-    const s = summarizeRun(r, P.tests.length);
-    sess.lastRun = { t: elapsed(), passed: s.passed, total: s.total, compileError: r.compileError || null, timeout: !!r.timeout, results: (r.results || []).map(x => ({ name: x.name, pass: x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms })), logs: (r.logs || []).slice(0, 100), ms: r.ms };
+    const s = summarizeRun(r, tests.length);
+    sess.lastRun = { t: elapsed(), part: curPart(), passed: s.passed, total: s.total, compileError: r.compileError || null, timeout: !!r.timeout, results: (r.results || []).map(x => ({ name: x.name, pass: x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms })), logs: (r.logs || []).slice(0, 100), ms: r.ms };
     sess.runs.push({ t: sess.lastRun.t, passed: s.passed, total: s.total });
     logEvent(s.passed === s.total ? 'run' : 'runfail', r.compileError ? 'Ran tests: code did not load' : 'Ran tests: ' + s.passed + ' of ' + s.total + ' passed', { passed: s.passed, total: s.total });
     renderConsole();
@@ -562,10 +595,13 @@
       host.innerHTML = `<div class="run-summary bad">Your code did not load</div><div class="compile-err">${esc(r.compileError)}</div>`;
     } else {
       const ok = r.passed === r.total;
-      host.innerHTML = `<div class="run-summary ${ok ? 'ok' : 'bad'}">${ok ? 'All ' + r.total + ' visible tests passed' : r.passed + ' of ' + r.total + ' visible tests passed'}${ok ? '<span class="faint" style="font-weight:400"> · hidden tests run on submit</span>' : ''}</div>` +
+      const P = problem(sess.problemId);
+      const canAdvance = ok && (r.part || 0) === curPart() && curPart() < P.parts.length - 1 && sess.status === 'active';
+      host.innerHTML = `<div class="run-summary ${ok ? 'ok' : 'bad'}">${ok ? 'All ' + r.total + ' visible tests passed' : r.passed + ' of ' + r.total + ' visible tests passed'}${ok && !canAdvance ? '<span class="faint" style="font-weight:400"> · hidden tests run on submit</span>' : ''}${canAdvance ? `<button class="btn btn-primary btn-sm" id="btn-next-part">Continue to Part ${curPart() + 2}</button>` : ''}</div>` +
         r.results.map(x => `<div class="result ${x.pass ? 'pass' : 'fail'}"><span class="mark">${x.pass ? '✓' : '✕'}</span><span>${esc(x.name)}</span><span class="ms">${x.ms != null ? x.ms.toFixed(1) + ' ms' : ''}</span>
           ${x.pass ? '' : `<div class="detail">${x.error ? `<span>${esc(x.error)}</span>` : `<span><em>expected </em>${esc(x.expected)}</span><span><em>received </em>${esc(x.got)}</span>`}</div>`}</div>`).join('');
     }
+    const nb = $('#btn-next-part'); if (nb) nb.onclick = advancePart;
     $('#console-logs').innerHTML = r.logs.length ? r.logs.map(l => `<div class="log-line">${esc(l)}</div>`).join('') : '<p class="console-empty">Your code did not log anything on the last run.</p>';
   }
   function showConsoleTab(which) {
@@ -590,6 +626,7 @@
       'PROBLEM: ' + P.title,
       'Context: ' + P.scenario,
       stripHtml(P.body),
+      P.parts.length > 1 ? '\nThis problem has ' + P.parts.length + ' parts and the candidate is on Part ' + (curPart() + 1) + '. Later parts are not revealed yet; do not speculate about them.\n' + P.parts.slice(0, curPart() + 1).map((pt, i) => pt.title + (i < curPart() ? ' (done)' : ' (current)') + '\n' + stripHtml(pt.body)).join('\n\n') : '',
       '',
       'Example:',
       P.examples,
@@ -996,8 +1033,8 @@
     showReport(report);
   }
   function normResults(r, tests) {
-    if (r.compileError) return tests.map(t => ({ name: t.name, pass: false, error: r.compileError }));
-    return (r.results || []).map(x => ({ name: x.name, pass: !!x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms }));
+    if (r.compileError) return tests.map(t => ({ name: t.name, part: t.part || 0, pass: false, error: r.compileError }));
+    return (r.results || []).map((x, i) => ({ name: x.name, part: (tests[i] && tests[i].part) || 0, pass: !!x.pass, got: x.got, expected: x.expected, error: x.error, ms: x.ms }));
   }
 
   // ---------- Metrics and scoring ----------
@@ -1024,9 +1061,14 @@
     const visPass = visRes.filter(r => r.pass).length;
     const hidPass = hidRes.filter(r => r.pass).length;
     const timeUsed = (s.submittedAt || Date.now()) - s.startedAt;
+    const all = visRes.concat(hidRes);
+    const partsPassed = P.parts.filter((pt, i) => all.filter(r => r.part === i).every(r => r.pass)).length;
     return {
+      partsTotal: P.parts.length, partsReached: Math.min(P.parts.length, (s.part || 0) + 1), partsPassed,
       visPass, visTotal: visRes.length, hidPass, hidTotal: hidRes.length,
       passRate: (visPass + hidPass) / Math.max(1, visRes.length + hidRes.length),
+      // Multi-part rounds expect most parts done, not all: two of three fully passing meets the bar.
+      gateRate: P.parts.length > 1 && partsPassed / P.parts.length >= 2 / 3 ? Math.max(0.85, (visPass + hidPass) / Math.max(1, visRes.length + hidRes.length)) : (visPass + hidPass) / Math.max(1, visRes.length + hidRes.length),
       compileError: compileError || null,
       prompts: prompts.length,
       avgPromptChars: prompts.length ? Math.round(prompts.reduce((a, p) => a + p.length, 0) / prompts.length) : 0,
@@ -1055,8 +1097,8 @@
     const d = {};
     // Correctness
     const total = m.visTotal + m.hidTotal, passed = m.visPass + m.hidPass;
-    let c = m.passRate >= 1 ? 4 : m.passRate >= 0.8 ? 3 : m.passRate >= 0.45 ? 2 : 1;
-    d.correctness = { score: c, evidence: m.compileError ? 'The submitted code did not load: ' + m.compileError.slice(0, 140) : passed + ' of ' + total + ' tests passed (' + m.visPass + '/' + m.visTotal + ' visible, ' + m.hidPass + '/' + m.hidTotal + ' hidden).', improve: c >= 4 ? 'Keep it up: mention the edge cases you covered when you present the solution.' : 'Before submitting, ask which inputs the visible tests do not cover (large inputs, boundaries) and test those yourself.' };
+    let c = m.passRate >= 1 ? 4 : m.gateRate >= 0.8 ? 3 : m.passRate >= 0.45 ? 2 : 1;
+    d.correctness = { score: c, evidence: m.compileError ? 'The submitted code did not load: ' + m.compileError.slice(0, 140) : passed + ' of ' + total + ' tests passed (' + m.visPass + '/' + m.visTotal + ' visible, ' + m.hidPass + '/' + m.hidTotal + ' hidden).' + (m.partsTotal > 1 ? ' Reached Part ' + m.partsReached + ' of ' + m.partsTotal + '; ' + m.partsPassed + ' fully passing.' : ''), improve: c >= 4 ? 'Keep it up: mention the edge cases you covered when you present the solution.' : 'Before submitting, ask which inputs the visible tests do not cover (large inputs, boundaries) and test those yourself.' };
     // Problem decomposition
     let p = 2;
     if (m.notesChars > 60) p++;
@@ -1122,13 +1164,15 @@
       ? '[' + mmss(t.t) + '] CANDIDATE' + ((t.att || []).length ? ' (attached: ' + t.att.join(', ') + ')' : '') + ': ' + t.message.slice(0, 900)
       : '[' + mmss(t.t) + '] ASSISTANT (' + t.inTok + ' in / ' + t.outTok + ' out): ' + t.content.slice(0, 1100)).join('\n\n').slice(-14000);
     const events = s.events.map(e => '[' + mmss(e.t) + '] ' + e.type + ': ' + e.text).join('\n').slice(-3500);
-    const tests = visRes.map(r => 'visible ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200))).concat(hidRes.map(r => 'hidden ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200)))).join('\n');
+    const tests = visRes.map(r => (P.parts.length > 1 ? 'P' + (r.part + 1) + ' ' : '') + 'visible ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200))).concat(hidRes.map(r => (P.parts.length > 1 ? 'P' + (r.part + 1) + ' ' : '') + 'hidden ' + (r.pass ? 'PASS' : 'FAIL') + ' ' + r.name + (r.pass ? '' : ' :: ' + (r.error || ('expected ' + r.expected + ' got ' + r.got)).slice(0, 200)))).join('\n');
     const numbered = s.code.split('\n').map((l, i) => String(i + 1).padStart(3) + '  ' + l).join('\n').slice(0, 12000);
     return [
       'You are a senior engineering interviewer at a large tech company writing the scorecard for an AI-assisted coding interview. The candidate had a coding assistant and a fixed token budget. Judge both the result and how they worked: did they understand and plan, direct the assistant precisely, critically review and verify its output, and manage tokens and time? Rely only on the evidence below. Be direct and specific, cite moments (timestamps, line numbers, prompt wording). Write to the candidate in second person.',
       '',
-      'PROBLEM: ' + P.title + ' (' + P.difficulty + ')',
+      'PROBLEM: ' + P.title + ' (' + P.level + ' level, ' + P.difficulty + ')' + (P.format ? '\nFormat: ' + P.format : ''),
       stripHtml(P.body).slice(0, 1800),
+      P.parts.length > 1 ? 'PARTS (the candidate unlocks each part by passing the previous part\'s visible tests; reached Part ' + m.partsReached + ' of ' + m.partsTotal + ', ' + m.partsPassed + ' fully passing including hidden tests):\n' + P.parts.map(pt => '- ' + pt.title + ': ' + stripHtml(pt.body).slice(0, 500)).join('\n') : '',
+      'Calibrate expectations to the ' + P.level + ' level: ' + (P.level === 'Senior' ? 'expect production judgement (failure modes, scale, design trade-offs) and disciplined use of the assistant.' : P.level === 'New grad' ? 'weight fundamentals, clear reasoning and verification over speed.' : 'expect a working, tested solution and deliberate, well-scoped prompts.'),
       '',
       'WHAT GOOD LOOKS LIKE (interviewer notes): ' + P.rubric,
       '',
@@ -1160,18 +1204,18 @@
       const a = ai && Array.isArray(ai.dimensions) ? ai.dimensions.find(x => x && x.id === D.id) : null;
       let score = a && Number.isFinite(+a.score) ? clamp(Math.round(+a.score), 1, 4) : h.score;
       if (D.id === 'correctness') score = clamp(score, h.score - 1, h.score + 1);
-      if (D.id === 'correctness' && m.passRate < 0.45) score = Math.min(score, 1);
+      if (D.id === 'correctness' && m.gateRate < 0.45) score = Math.min(score, 1);
       dims[D.id] = { score, evidence: (a && a.evidence) || h.evidence, improve: (a && a.improve) || h.improve };
     });
     const overall = DIMS.reduce((acc, D) => acc + dims[D.id].score * D.weight, 0);
     let verdict = overall >= 3.5 ? 'strong_hire' : overall >= 3.0 ? 'hire' : overall >= 2.5 ? 'lean_hire' : overall >= 1.8 ? 'lean_no_hire' : 'no_hire';
     const rank = ['no_hire', 'lean_no_hire', 'lean_hire', 'hire', 'strong_hire'];
-    if (m.passRate < 0.5 && rank.indexOf(verdict) > 1) verdict = 'lean_no_hire';
-    if (m.passRate < 0.2) verdict = 'no_hire';
-    if (m.passRate < 0.85 && rank.indexOf(verdict) > 2) verdict = 'lean_hire';
+    if (m.gateRate < 0.5 && rank.indexOf(verdict) > 1) verdict = 'lean_no_hire';
+    if (m.gateRate < 0.2) verdict = 'no_hire';
+    if (m.gateRate < 0.85 && rank.indexOf(verdict) > 2) verdict = 'lean_hire';
     const arr = (x, f) => Array.isArray(x) && x.length ? x.filter(v => typeof v === 'string' && v.trim()).slice(0, 5) : f;
     return {
-      id: s.id, date: s.submittedAt || Date.now(), name: s.name, problemId: P.id, title: P.title, team: P.team, difficulty: P.difficulty,
+      id: s.id, date: s.submittedAt || Date.now(), name: s.name, problemId: P.id, title: P.title, team: P.team, difficulty: P.difficulty, level: P.level,
       budget: s.budget, used: s.used, duration: s.duration, tier: s.tier, source,
       verdict, overall,
       headline: (ai && typeof ai.headline === 'string' && ai.headline) || heur.headline,
@@ -1188,8 +1232,19 @@
   }
   function saveHistory(r) {
     const h = store.get(K_HISTORY, []);
-    h.unshift({ id: r.id, date: r.date, title: r.title, name: r.name, verdict: r.verdict, overall: r.overall, budget: r.budget, used: r.used, testsPassed: r.metrics.visPass + r.metrics.hidPass, testsTotal: r.metrics.visTotal + r.metrics.hidTotal, report: r });
-    store.set(K_HISTORY, h.slice(0, 15));
+    h.unshift({ id: r.id, date: r.date, title: r.title, problemId: r.problemId, level: r.level, name: r.name, verdict: r.verdict, overall: r.overall, budget: r.budget, used: r.used, testsPassed: r.metrics.visPass + r.metrics.hidPass, testsTotal: r.metrics.visTotal + r.metrics.hidTotal, report: r });
+    // Full reports for the latest 15 sessions; older ones keep a compact summary for the progress view.
+    store.set(K_HISTORY, h.slice(0, 60).map((x, i) => i < 15 ? x : compactRecord(x)));
+  }
+
+  function compactRecord(x) {
+    if (!x.report) return x;
+    const r = x.report, c = Object.assign({}, x);
+    delete c.report;
+    c.dims = {}; Object.keys(r.dims).forEach(k => { c.dims[k] = { score: r.dims[k].score }; });
+    c.metrics = r.metrics;
+    c.problemId = r.problemId; c.level = r.level;
+    return c;
   }
 
   // ---------- Report ----------
@@ -1202,7 +1257,7 @@
     $('#report').innerHTML = `
       <div class="report-head">
         <div>
-          <div class="meta"><span>${esc(r.name || 'Candidate')}</span><span>${esc(r.title)} · ${esc(r.team)} · ${r.difficulty}</span><span>${new Date(r.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span><span>Session ${esc(r.id)}</span></div>
+          <div class="meta"><span>${esc(r.name || 'Candidate')}</span><span>${esc(r.title)} · ${esc(r.team)} · ${r.level ? esc(r.level) + ' · ' : ''}${r.difficulty}</span><span>${new Date(r.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span><span>Session ${esc(r.id)}</span></div>
           <h1>${esc(r.headline)}</h1>
           <p class="summary">${esc(r.summary)}</p>
         </div>
@@ -1213,8 +1268,9 @@
         </div>
       </div>
 
-      <div class="stat-row">
+      <div class="stat-row" style="--cols:${m.partsTotal > 1 ? 6 : 5}">
         <div class="stat"><small>Tests passed</small><b>${m.visPass + m.hidPass}<span class="faint" style="font-size:15px"> / ${m.visTotal + m.hidTotal}</span></b><span>${m.hidPass}/${m.hidTotal} hidden</span></div>
+        ${m.partsTotal > 1 ? `<div class="stat"><small>Parts</small><b>${m.partsPassed}<span class="faint" style="font-size:15px"> / ${m.partsTotal}</span></b><span>fully passing · reached Part ${m.partsReached}</span></div>` : ''}
         <div class="stat"><small>Tokens used</small><b>${fmt(r.used)}</b><span>${pct(m.tokenPct)} of ${kfmt(r.budget)}</span></div>
         <div class="stat"><small>Time used</small><b>${mmss(m.timeUsedMin * 60000)}</b><span>of ${r.duration}:00${m.timedOut ? ', timed out' : ''}</span></div>
         <div class="stat"><small>Prompts</small><b>${m.prompts}</b><span>${m.applies} applied · ${pct(m.aiShare)} AI lines</span></div>
@@ -1264,6 +1320,13 @@
         <div class="listbox"><h3>Interviewer follow-ups for this problem</h3><ul>${problem(r.problemId).followUps.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
       </div>
 
+      <section class="r-section">
+        <h2>Debrief</h2>
+        <div class="debrief" id="debrief"></div>
+      </section>
+
+      ${refSolutionHTML(r)}
+
       ${r.turns.length ? `<details class="transcript"><summary>Assistant transcript (${tok.length} exchanges)</summary><div class="thread">${r.turns.map((t, i) => turnHTML(Object.assign({ live: false }, t), 'r' + i, false)).join('')}</div></details>` : ''}
 
       <div class="report-actions">
@@ -1272,12 +1335,327 @@
       </div>`;
     $('#btn-again').onclick = () => { prefs.problemId = r.problemId; savePrefs(); showView('lobby'); renderLobby(); openBriefing(); };
     $('#btn-lobby').onclick = () => { showView('lobby'); renderLobby(); };
+    renderDebrief(r);
     window.scrollTo(0, 0);
+  }
+  // ---------- Shared AI helper for the debrief and practice plan (not metered) ----------
+  const aiReady = () => (agentMode === 'claude' && sample) || (agentMode === 'byok' && byok);
+  async function aiText(system, messages, onText, signal) {
+    const input = [{ role: 'user', content: system }].concat(messages);
+    if (agentMode === 'claude' && sample) {
+      const r = await sample(input, { onText: onText ? (x => onText(x.text)) : undefined, signal, cache: false, modelTier: 'default' });
+      return r.text;
+    }
+    if (agentMode === 'byok' && byok) {
+      const r = await byokChat(input, 'default', onText ? (x => onText(x.text)) : null, signal);
+      return r.text;
+    }
+    return null;
+  }
+
+  // ---------- Debrief (scorecard follow-up chat) ----------
+  function debriefContext(r) {
+    const P = problem(r.problemId);
+    const failing = r.tests.visible.concat(r.tests.hidden).filter(x => !x.pass).slice(0, 12)
+      .map(x => '- ' + (r.metrics.partsTotal > 1 ? 'P' + ((x.part || 0) + 1) + ' ' : '') + x.name + ': ' + (x.error || ('expected ' + String(x.expected).slice(0, 120) + ', got ' + String(x.got).slice(0, 120))));
+    const prompts = r.turns.filter(t => t.role === 'user').map(t => '[' + mmss(t.t) + '] ' + t.message.slice(0, 300)).join('\n').slice(-3000);
+    return [
+      'You are the interviewer, now debriefing the candidate after an AI-assisted coding interview you scored. Be candid, specific and kind. Cite evidence from the session (timestamps, prompts, test names, code lines). Keep answers under 180 words unless they ask for more. When useful, end with one concrete drill.',
+      '',
+      'PROBLEM: ' + P.title + ' (' + (r.level || P.level) + ', ' + r.difficulty + ')',
+      stripHtml(P.body).slice(0, 1200),
+      P.parts.length > 1 ? 'Parts: ' + P.parts.map(pt => pt.title).join(' | ') + '. Reached Part ' + r.metrics.partsReached + ', fully passed ' + r.metrics.partsPassed + '.' : '',
+      'REFERENCE APPROACH: ' + P.offline.approach + ' ' + P.offline.complexity,
+      '',
+      'SCORECARD: verdict ' + VERDICTS[r.verdict] + ', overall ' + r.overall.toFixed(1) + '/4. ' + r.headline,
+      DIMS.map(D => D.label + ': ' + r.dims[D.id].score + '/4. ' + r.dims[D.id].evidence).join('\n'),
+      'Tests: ' + (r.metrics.visPass + r.metrics.hidPass) + '/' + (r.metrics.visTotal + r.metrics.hidTotal) + ' passed.' + (failing.length ? '\nFailing:\n' + failing.join('\n') : ''),
+      'Tokens ' + r.used + '/' + r.budget + ', ' + r.metrics.prompts + ' prompts, ' + r.metrics.runs + ' test runs, ' + Math.round(r.metrics.aiShare * 100) + '% of new lines from the assistant.',
+      '',
+      'CANDIDATE PROMPTS:', prompts || '(none)',
+      '',
+      'SUBMITTED CODE:', r.code.slice(0, 6000),
+    ].join('\n');
+  }
+  function offlineDebrief(r, q) {
+    const m = q.toLowerCase();
+    const P = problem(r.problemId);
+    const weakest = DIMS.slice().sort((a, b) => r.dims[a.id].score - r.dims[b.id].score || b.weight - a.weight).slice(0, 2);
+    const failing = r.tests.visible.concat(r.tests.hidden).filter(x => !x.pass);
+    if (/(fail|test|bug|wrong|hidden)/.test(m)) {
+      if (!failing.length) return 'Every test passed. The interesting question is whether you could explain why: walk through ' + P.offline.edge.slice(0, 2).map(e => '`' + e + '`').join(' and ') + ' out loud.';
+      return 'Failing tests:\n\n' + failing.slice(0, 6).map(x => '- **' + x.name + '**: ' + (x.error || 'expected `' + String(x.expected).slice(0, 80) + '`, got `' + String(x.got).slice(0, 80) + '`')).join('\n') + '\n\nEdge cases this problem is known for:\n' + P.offline.edge.map(e => '- ' + e).join('\n');
+    }
+    if (/(solution|approach|optimal|reference|how would|strong candidate)/.test(m)) return P.offline.approach + '\n\n' + P.offline.complexity + '\n\nThe full reference solution is in the section above.';
+    return 'Your two weakest areas this session:\n\n' + weakest.map(D => '- **' + D.label + '** (' + r.dims[D.id].score + '/4): ' + r.dims[D.id].improve).join('\n') + '\n\nDrill: ' + DRILLS[weakest[0].id][0] + '\n\nConnect Claude for a conversational debrief that reads your transcript and code.';
+  }
+  let debriefStream = null;
+  function renderDebrief(r) {
+    const host = $('#debrief'); if (!host) return;
+    const turns = r.debrief || [];
+    const S = ['What should I work on first?', 'Why did my failing tests fail?', 'How would a strong candidate have used the assistant here?', 'Walk me through the reference approach.'];
+    host.innerHTML = `<div class="thread">${turns.length ? turns.map((t, i) => t.role === 'user'
+      ? `<div class="msg user"><div class="msg-meta"><b>You</b></div><div class="msg-text">${esc(t.content)}</div></div>`
+      : `<div class="msg agent"><div class="msg-meta"><b>Interviewer</b><span>${t.live ? 'writing…' : t.mode === 'offline' ? 'from your scorecard' : ''}</span></div><div class="msg-text">${t.content ? md(t.content, 'd' + i, false) : '<div class="thinking">Thinking</div>'}</div></div>`).join('')
+      : `<div class="starters"><p>Ask about your session. ${aiReady() ? 'Claude has your scorecard, prompts, tests and code.' : 'Claude is not connected, so answers come from your scorecard.'} This does not use your interview budget.</p>${S.map(x => `<button data-dq="${esc(x)}"><span>${esc(x)}</span></button>`).join('')}</div>`}</div>
+      <form class="debrief-form" id="debrief-form"><input class="field" id="debrief-q" placeholder="Ask the interviewer about this session" autocomplete="off"${debriefStream ? ' disabled' : ''}><button class="btn btn-primary" ${debriefStream ? 'disabled' : ''}>Ask</button></form>`;
+    $$('[data-dq]', host).forEach(b => b.onclick = () => askDebrief(r, b.dataset.dq));
+    $('#debrief-form').onsubmit = e => { e.preventDefault(); const q = $('#debrief-q').value.trim(); if (q) askDebrief(r, q); };
+  }
+  async function askDebrief(r, q) {
+    if (debriefStream) return;
+    r.debrief = r.debrief || [];
+    r.debrief.push({ role: 'user', content: q.slice(0, 1500) });
+    const turn = { role: 'assistant', content: '', live: true, mode: aiReady() ? agentMode : 'offline' };
+    r.debrief.push(turn);
+    const ctl = new AbortController();
+    debriefStream = ctl;
+    renderDebrief(r);
+    const paint = text => { turn.content = text; const el = $$('#debrief .msg.agent .msg-text').pop(); if (el) el.innerHTML = md(text, 'dl', false); };
+    try {
+      if (turn.mode === 'offline') await offlineStream(offlineDebrief(r, q), x => paint(x.text), ctl.signal);
+      else {
+        const msgs = r.debrief.slice(0, -1).slice(-10).map(t => ({ role: t.role, content: t.content }));
+        turn.content = await aiText(debriefContext(r), msgs, paint, ctl.signal) || turn.content;
+      }
+    } catch (e) {
+      turn.content = (e && e.text) || '';
+      if (!turn.content) { turn.mode = 'offline'; turn.content = offlineDebrief(r, q) + '\n\n(Claude could not answer: ' + ((e && e.code) || 'error') + '.)'; }
+    }
+    turn.live = false;
+    debriefStream = null;
+    const h = store.get(K_HISTORY, []);
+    const rec = h.find(x => x.id === r.id);
+    if (rec && rec.report) { rec.report.debrief = r.debrief.slice(-20); store.set(K_HISTORY, h); }
+    renderDebrief(r);
+    const f = $('#debrief-q'); if (f) f.focus();
+  }
+
+  // ---------- Progress review across sessions ----------
+  const DRILLS = {
+    correctness: ['Before you submit, write three inputs the visible tests skip (empty, boundary, largest size) and check them with console.log.', 'On multi-part problems, re-run the earlier parts after every change; later parts often break them.', 'Read the constraints first and name the complexity you need before choosing a data structure.'],
+    problem_solving: ['Spend the first three to five minutes in Notes: restate the task, list edge cases, pick the data structure.', 'Ask the assistant to critique your plan before you ask it for code.', 'Split the work into named steps and prompt for one step at a time.'],
+    ai_collaboration: ['Put the signature, the constraints and your chosen approach in one precise prompt.', 'Ask for one function at a time instead of the whole file.', 'Before applying a reply, ask what input would break it.'],
+    verification: ['Run the tests after every applied suggestion, no exceptions.', 'Add one check of your own for each bug you fix.', 'Ask the assistant for edge cases, then test them yourself instead of trusting its answer.'],
+    code_quality: ['Remove console.log calls and TODOs before you submit.', 'Name helpers by what they return and keep methods short enough to explain out loud.', 'Read assistant code line by line and rename anything unclear.'],
+    efficiency: ['Redo a problem you solved with a 5k budget.', 'Detach History and Code for questions that do not need them.', 'Ask for short answers: "bullets only, no code".'],
+  };
+  function historyRows() {
+    return store.get(K_HISTORY, []).map(x => {
+      const r = x.report;
+      const pid = x.problemId || (r && r.problemId) || (PROBLEMS.find(p => p.title === x.title) || {}).id;
+      const P = PROBLEMS.find(p => p.id === pid);
+      return {
+        id: x.id, date: x.date, title: x.title, problemId: pid, level: x.level || (r && r.level) || (P && P.level) || '',
+        verdict: x.verdict, overall: x.overall, used: x.used, budget: x.budget,
+        dims: (r && r.dims) || x.dims || {}, m: (r && r.metrics) || x.metrics || {}, hasReport: !!r,
+      };
+    }).filter(x => x.dims && Object.keys(x.dims).length).reverse(); // oldest first
+  }
+  const avg = a => a.length ? a.reduce((s, v) => s + v, 0) / a.length : null;
+  function progressStats(rows) {
+    const dimStats = DIMS.map(D => {
+      const all = rows.map(r => r.dims[D.id] && r.dims[D.id].score).filter(v => v != null);
+      const recent = all.slice(-3), earlier = all.slice(0, -3);
+      return { D, all: avg(all), recent: avg(recent), earlier: avg(earlier), n: all.length };
+    });
+    const focus = dimStats.slice().sort((a, b) => (a.recent - b.recent) || (b.D.weight - a.D.weight)).filter(d => d.recent != null && d.recent < 3.5).slice(0, 2);
+    const pctOf = (f, list) => list.length ? list.filter(f).length / list.length : null;
+    const ms = rows.map(r => r.m);
+    const withApply = ms.filter(m => m.applies);
+    const habits = [
+      { label: 'Wrote planning notes', v: pctOf(m => m.notesChars > 60, ms), fmt: 'pct', target: 0.8, good: v => v >= 0.8, tip: 'Plan in Notes before prompting.' },
+      { label: 'Asked about the approach before code', v: pctOf(m => m.planningPrompts > 0, ms), fmt: 'pct', target: 0.8, good: v => v >= 0.8, tip: 'Open with a plan or edge-case prompt.' },
+      { label: 'Re-ran tests after applying assistant code', v: pctOf(m => m.ranAfterApply, withApply), fmt: 'pct', target: 1, good: v => v >= 0.99, tip: 'Run tests after every apply.' },
+      { label: 'Test runs per session', v: avg(ms.map(m => m.runs || 0)), fmt: 'num', target: 3, good: v => v >= 3, tip: 'Run early and often.' },
+      { label: 'Share of the token budget used', v: avg(ms.map(m => m.tokenPct || 0)), fmt: 'pct', target: 0.7, good: v => v <= 0.7, tip: 'Attach less context; ask for shorter replies.', lower: true },
+      { label: 'New lines taken from the assistant', v: avg(ms.filter(m => m.authoredLines).map(m => m.aiShare)), fmt: 'pct', target: 0.7, good: v => v <= 0.7, tip: 'Fine if you can explain every line; otherwise write more yourself.', lower: true },
+      { label: 'Minutes before the first prompt', v: avg(ms.filter(m => m.firstPromptMin != null).map(m => m.firstPromptMin)), fmt: 'min', target: 2, good: v => v >= 2, tip: 'Read and plan for a couple of minutes first.' },
+    ];
+    const used = new Set();
+    focus.forEach(f => { f.rec = recommendFor(rows, f.D.id, used); used.add(f.rec.P.id); });
+    return { dimStats, focus, habits };
+  }
+  function recommendFor(rows, dimId, exclude) {
+    const ok = p => !exclude || !exclude.has(p.id);
+    const tried = new Map();
+    rows.forEach(r => { const b = tried.get(r.problemId); if (!b || r.overall > b) tried.set(r.problemId, r.overall); });
+    const levelCounts = {};
+    rows.forEach(r => { if (r.level) levelCounts[r.level] = (levelCounts[r.level] || 0) + 1; });
+    const myLevel = Object.keys(levelCounts).sort((a, b) => levelCounts[b] - levelCounts[a])[0] || 'Mid-level';
+    const fresh = PROBLEMS.filter(p => !tried.has(p.id) && ok(p));
+    const sameLevel = fresh.filter(p => p.level === myLevel);
+    // Verification and correctness drills suit staged problems; efficiency suits a redo on a tight budget.
+    if (dimId === 'efficiency') {
+      const best = [...tried.entries()].filter(e => ok(problem(e[0]))).sort((a, b) => b[1] - a[1])[0];
+      if (best) return { P: problem(best[0]), budget: 5000, why: 'Redo a problem you know on a 5k budget.' };
+    }
+    const pool = (dimId === 'verification' || dimId === 'correctness') ? sameLevel.filter(p => p.parts.length > 1).concat(sameLevel) : sameLevel;
+    if (pool.length) return { P: pool[0], why: 'Not tried yet, at your usual level (' + myLevel + ').' };
+    if (fresh.length) return { P: fresh[0], why: 'Not tried yet.' };
+    const worst = [...tried.entries()].sort((a, b) => a[1] - b[1])[0] || [PROBLEMS[0].id];
+    return { P: problem(worst[0]), why: 'Your lowest score so far.' };
+  }
+  function trendChart(rows) {
+    const W = 720, H = 200, L = 40, R = 16, T = 14, B = 26;
+    const n = rows.length;
+    const x = i => n === 1 ? (L + W - R) / 2 : L + i * (W - L - R) / (n - 1);
+    const y = v => T + (1 - (v - 1) / 3) * (H - T - B);
+    const grid = [1, 2, 3, 4].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line-2)"></line><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--ink-3)">${v}</text>`).join('');
+    const bar = `<line x1="${L}" x2="${W - R}" y1="${y(3)}" y2="${y(3)}" stroke="var(--ok)" stroke-dasharray="5 4" stroke-width="1.5"></line><text x="${W - R}" y="${y(3) - 6}" text-anchor="end" font-size="11" fill="var(--ok)">Hire bar</text>`;
+    const path = rows.map((r, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(r.overall).toFixed(1)).join(' ');
+    const dots = rows.map((r, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(r.overall).toFixed(1)}" r="4.5" class="dot-${r.verdict}"><title>${esc(r.title)}: ${r.overall.toFixed(1)} (${VERDICTS[r.verdict]}), ${new Date(r.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</title></circle>`).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Overall score for each of your last ${n} sessions">${grid}${bar}<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"></path>${dots}</svg>`;
+  }
+  function offlinePlan(rows, st) {
+    const lines = ['**Your next week**', ''];
+    st.focus.forEach((f, i) => {
+      const rec = f.rec;
+      lines.push('- **Session ' + (i + 1) + ':** ' + rec.P.title + (rec.budget ? ' on a ' + kfmt(rec.budget) + ' budget' : '') + '. Focus on ' + f.D.label.toLowerCase() + ': ' + DRILLS[f.D.id][0]);
+    });
+    const weakHabit = st.habits.find(h => h.v != null && !h.good(h.v));
+    if (weakHabit) lines.push('- **Every session:** ' + weakHabit.tip);
+    lines.push('- **Then:** redo your lowest-scoring problem and compare the two scorecards.');
+    return lines.join('\n');
+  }
+  function renderProgress() {
+    showView('progress');
+    const rows = historyRows();
+    const host = $('#progress');
+    if (!rows.length) {
+      host.innerHTML = `<div class="report-head"><div><h1>Your progress</h1><p class="summary">Finish an interview and this page will show your score trend, your rubric averages, the habits that cost you points and what to practise next.</p></div></div><div class="report-actions"><button class="btn btn-primary" id="pg-start">Choose a problem</button></div>`;
+      $('#pg-start').onclick = () => { showView('lobby'); renderLobby(); };
+      window.scrollTo(0, 0);
+      return;
+    }
+    const st = progressStats(rows);
+    const recent = rows.slice(-5), prior = rows.slice(-10, -5);
+    const recentAvg = avg(recent.map(r => r.overall)), priorAvg = avg(prior.map(r => r.overall));
+    const covered = new Set(rows.map(r => r.problemId));
+    const hires = rows.filter(r => r.verdict === 'hire' || r.verdict === 'strong_hire').length;
+    const fmtV = (h, v) => v == null ? '–' : h.fmt === 'pct' ? Math.round(v * 100) + '%' : h.fmt === 'min' ? v.toFixed(1) + ' min' : v.toFixed(1);
+    const fmtT = h => h.target === 1 && h.fmt === 'pct' ? '100%' : (h.lower ? '≤ ' : '≥ ') + (h.fmt === 'pct' ? Math.round(h.target * 100) + '%' : h.fmt === 'min' ? h.target + ' min' : h.target);
+    const byProblem = new Map();
+    rows.forEach(r => { const a = byProblem.get(r.problemId) || []; a.push(r); byProblem.set(r.problemId, a); });
+    host.innerHTML = `
+      <div class="report-head">
+        <div>
+          <div class="meta"><span>${pl(rows.length, 'session')}</span><span>Stored in this browser</span></div>
+          <h1>${st.focus.length ? 'Work on ' + st.focus.map(f => f.D.label.toLowerCase()).join(' and ') + ' next.' : 'You are meeting the bar in every area. Raise the level.'}</h1>
+          <p class="summary">${st.focus.length ? 'These are your lowest-scoring rubric areas over your last three sessions. Each comes with drills and a problem to practise them on.' : 'Your recent sessions meet the bar everywhere. Try a harder level or a tighter budget.'}</p>
+        </div>
+        <div class="score-block">
+          <div class="score-big">${recentAvg.toFixed(1)}<small> / 4</small></div>
+          <p class="source-note">Average of your last ${pl(recent.length, 'session')}${priorAvg != null ? ', ' + (recentAvg - priorAvg >= 0 ? 'up ' : 'down ') + Math.abs(recentAvg - priorAvg).toFixed(1) + ' on the five before' : ''}.</p>
+        </div>
+      </div>
+
+      <div class="stat-row" style="--cols:4">
+        <div class="stat"><small>Sessions</small><b>${rows.length}</b><span>${hires} at hire or above</span></div>
+        <div class="stat"><small>Problems tried</small><b>${covered.size}<span class="faint" style="font-size:15px"> / ${PROBLEMS.length}</span></b><span>${LEVELS.map(l => rows.filter(r => r.level === l).length + ' ' + l.toLowerCase()).join(', ')}</span></div>
+        <div class="stat"><small>Best score</small><b>${Math.max(...rows.map(r => r.overall)).toFixed(1)}</b><span>${esc(rows.slice().sort((a, b) => b.overall - a.overall)[0].title)}</span></div>
+        <div class="stat"><small>Average tokens</small><b>${Math.round(avg(rows.map(r => (r.m.tokenPct || 0))) * 100)}%</b><span>of the budget</span></div>
+      </div>
+
+      ${st.focus.length ? `<section class="r-section"><h2>Focus areas</h2><div class="focus-grid">${st.focus.map(f => {
+        const rec = f.rec;
+        const last = rows.slice().reverse().find(r => r.hasReport);
+        const lastRep = last ? (store.get(K_HISTORY, []).find(x => x.id === last.id) || {}).report : null;
+        const ev = lastRep && lastRep.dims[f.D.id] ? lastRep.dims[f.D.id].evidence : '';
+        return `<div class="focus-card">
+          <div class="focus-top"><h3>${f.D.label}</h3><span class="pips" data-s="${Math.floor(f.recent)}"><i></i><i></i><i></i><i></i></span></div>
+          <p class="muted">Recent average ${f.recent.toFixed(1)} / 4${f.earlier != null ? ' (was ' + f.earlier.toFixed(1) + ')' : ''}. ${f.D.desc}.</p>
+          ${ev ? `<p class="focus-ev"><b>Last time:</b> ${esc(ev)}</p>` : ''}
+          <ul>${DRILLS[f.D.id].map(d => `<li>${esc(d)}</li>`).join('')}</ul>
+          <div class="focus-rec"><span><b>${esc(rec.P.title)}</b> <span class="chip level ${levelClass(rec.P.level)}">${esc(rec.P.level)}</span>${rec.budget ? ' <span class="chip">' + kfmt(rec.budget) + ' budget</span>' : ''}<br><span class="faint">${esc(rec.why)}</span></span><button class="btn btn-sm btn-primary" data-practise="${rec.P.id}" data-budget="${rec.budget || ''}">Practise</button></div>
+        </div>`; }).join('')}</div></section>` : ''}
+
+      <section class="r-section">
+        <h2>Score over time</h2>
+        <div class="chart-box">${trendChart(rows.slice(-20))}<div class="chart-legend"><span><i style="background:var(--accent)"></i>Overall score per session, oldest on the left</span><span><i style="background:var(--ok);height:2px"></i>Hire bar (3.0)</span></div></div>
+      </section>
+
+      <section class="r-section">
+        <h2>Rubric areas</h2>
+        <div class="dim-bars">${st.dimStats.map(d => `<div class="dim-bar">
+          <span>${d.D.label}</span>
+          <span class="bar-track"><i style="width:${((d.all || 0) / 4 * 100).toFixed(1)}%"></i><b style="left:${(3 / 4 * 100)}%"></b></span>
+          <span class="num">${d.all == null ? '–' : d.all.toFixed(1)}</span>
+          <span class="num ${d.recent != null && d.earlier != null ? (d.recent > d.earlier + 0.05 ? 'up' : d.recent < d.earlier - 0.05 ? 'down' : '') : ''}">${d.recent != null && d.earlier != null ? (d.recent >= d.earlier ? '+' : '−') + Math.abs(d.recent - d.earlier).toFixed(1) : ''}</span>
+        </div>`).join('')}</div>
+        <p class="hint">Bars show your average across all sessions; the mark is the bar (3). The last column compares your last three sessions with the ones before.</p>
+      </section>
+
+      <section class="r-section">
+        <h2>Habits</h2>
+        <div class="tbl-wrap"><table class="turn-table habits"><thead><tr><th>Habit</th><th class="n">You</th><th class="n">Aim</th><th></th></tr></thead><tbody>
+          ${st.habits.map(h => `<tr><td>${h.label}<br><span class="faint">${esc(h.tip)}</span></td><td class="n">${fmtV(h, h.v)}</td><td class="n">${fmtT(h)}</td><td>${h.v == null ? '' : h.good(h.v) ? '<span class="chip ok">On track</span>' : '<span class="chip warn">Work on it</span>'}</td></tr>`).join('')}
+        </tbody></table></div>
+      </section>
+
+      <section class="r-section">
+        <h2>Practice plan</h2>
+        <div class="plan-box" id="plan-box"><p class="muted">${aiReady() ? 'Claude reads your rubric scores, habits and history and writes a plan for your next five sessions.' : 'Connect Claude for a written plan; without it you get one built from your scores.'}</p><button class="btn btn-primary" id="btn-plan">Write my practice plan</button></div>
+      </section>
+
+      <section class="r-section">
+        <h2>Problems</h2>
+        <div class="tbl-wrap"><table class="turn-table"><thead><tr><th>Problem</th><th class="m-hide">Level</th><th class="n m-hide">Attempts</th><th class="n">Best</th><th>Last result</th><th></th></tr></thead><tbody>
+          ${byLevel(PROBLEMS).map(p => { const a = byProblem.get(p.id) || []; const last = a[a.length - 1]; return `<tr><td>${esc(p.title)}${p.parts.length > 1 ? ' <span class="faint">· ' + p.parts.length + ' parts</span>' : ''}</td><td class="m-hide"><span class="chip level ${levelClass(p.level)}">${esc(p.level)}</span></td><td class="n m-hide">${a.length || '–'}</td><td class="n">${a.length ? Math.max(...a.map(r => r.overall)).toFixed(1) : '–'}</td><td>${last ? `<span class="verdict v-${last.verdict}">${VERDICTS[last.verdict]}</span>` : '<span class="faint">Not tried</span>'}</td><td><button class="btn btn-sm" data-practise="${p.id}">Practise</button></td></tr>`; }).join('')}
+        </tbody></table></div>
+      </section>`;
+    $$('[data-practise]', host).forEach(b => b.onclick = () => {
+      prefs.problemId = b.dataset.practise;
+      if (b.dataset.budget) prefs.budget = +b.dataset.budget;
+      prefs.level = 'All';
+      savePrefs(); showView('lobby'); renderLobby(); openBriefing();
+    });
+    $('#btn-plan').onclick = () => writePlan(rows, st);
+    window.scrollTo(0, 0);
+  }
+  async function writePlan(rows, st) {
+    const box = $('#plan-box');
+    const btn = $('#btn-plan'); btn.disabled = true; btn.textContent = 'Writing…';
+    const out = document.createElement('div'); out.className = 'msg-text';
+    box.innerHTML = ''; box.appendChild(out);
+    const paint = t => { out.innerHTML = md(t, 'plan', false); };
+    if (!aiReady()) { paint(offlinePlan(rows, st)); return; }
+    out.innerHTML = '<div class="thinking">Thinking</div>';
+    const summary = [
+      'Sessions (oldest first): ' + rows.slice(-12).map(r => r.title + ' [' + r.level + '] ' + r.overall.toFixed(1) + ' ' + VERDICTS[r.verdict]).join('; '),
+      'Rubric averages (all / last 3): ' + st.dimStats.map(d => d.D.label + ' ' + (d.all || 0).toFixed(1) + '/' + (d.recent || 0).toFixed(1)).join('; '),
+      'Habits: ' + st.habits.map(h => h.label + ' = ' + (h.v == null ? 'n/a' : h.fmt === 'pct' ? Math.round(h.v * 100) + '%' : h.v.toFixed(1))).join('; '),
+      'Available problems: ' + PROBLEMS.map(p => p.title + ' (' + p.level + ', ' + p.difficulty + (p.parts.length > 1 ? ', ' + p.parts.length + ' parts' : '') + ')').join('; '),
+    ].join('\n');
+    try {
+      const t = await aiText('You coach engineers for AI-assisted coding interviews, where candidates solve a problem with an AI assistant on a token budget and are scored on correctness, decomposition, working with the assistant, verification, code quality, and token/time management (scores 1-4, 3 is the bar). Using the data, write a plan for the next five practice sessions. For each: which problem (only from the list), budget and time settings, the one habit to practise and how to tell it worked. Then two sentences on the pattern you see. Markdown, under 250 words, second person, no preamble.', [{ role: 'user', content: summary }], paint, null);
+      paint(t);
+    } catch (e) {
+      paint(offlinePlan(rows, st) + '\n\n(Claude could not write the plan: ' + ((e && e.code) || 'error') + '.)');
+    }
+  }
+  $('#btn-progress').onclick = renderProgress;
+  $('#btn-report-progress').onclick = renderProgress;
+  $('#btn-progress-back').onclick = () => { showView('lobby'); renderLobby(); };
+
+  function refSolutionHTML(r) {
+    const P = problem(r.problemId);
+    if (P.id !== r.problemId || !P.solution) return '';
+    return `<details class="transcript ref-solution"><summary>Reference solution and approach</summary><div class="msg-text">${md(P.offline.approach + '\n\n' + P.offline.complexity + '\n\n' + FENCE + 'js\n' + P.solution.trim() + '\n' + FENCE, 'ref', false)}</div></details>`;
   }
   function testTable(r) {
     if (r.tests.compileError) return `<div class="compile-err" style="margin:0">${esc(r.tests.compileError)}</div>`;
     const row = (x, kind) => `<div class="result ${x.pass ? 'pass' : 'fail'}"><span class="mark">${x.pass ? '✓' : '✕'}</span><span>${esc(x.name)} <span class="faint" style="font-size:12px">${kind}</span></span><span class="ms">${x.ms != null ? x.ms.toFixed(1) + ' ms' : ''}</span>${x.pass ? '' : `<div class="detail">${x.error ? `<span>${esc(x.error)}</span>` : `<span><em>expected </em>${esc(String(x.expected).slice(0, 300))}</span><span><em>received </em>${esc(String(x.got).slice(0, 300))}</span>`}</div>`}</div>`;
-    return `<div class="timeline" style="padding:0">${r.tests.visible.map(x => row(x, 'visible')).join('')}${r.tests.hidden.map(x => row(x, 'hidden')).join('')}</div>`;
+    const all = r.tests.visible.map(x => [x, 'visible']).concat(r.tests.hidden.map(x => [x, 'hidden']));
+    if (!r.metrics.partsTotal || r.metrics.partsTotal < 2) return `<div class="timeline" style="padding:0">${all.map(([x, k]) => row(x, k)).join('')}</div>`;
+    const P = problem(r.problemId);
+    let out = '';
+    for (let i = 0; i < r.metrics.partsTotal; i++) {
+      const g = all.filter(([x]) => (x.part || 0) === i);
+      const ok = g.filter(([x]) => x.pass).length;
+      out += `<div class="part-group"><h3>${esc((P.parts[i] && P.parts[i].title) || 'Part ' + (i + 1))} <span class="faint">${ok}/${g.length}${i >= r.metrics.partsReached ? ' · not reached' : ''}</span></h3>${g.map(([x, k]) => row(x, k)).join('')}</div>`;
+    }
+    return `<div class="timeline" style="padding:0">${out}</div>`;
   }
   function tokenChart(r) {
     const W = 720, H = 220, L = 52, R = 16, T = 14, B = 30;
@@ -1314,7 +1692,7 @@
 
   // ---------- Views, modal, toast ----------
   function showView(name) {
-    ['lobby', 'session', 'eval', 'report'].forEach(v => { $('#view-' + v).hidden = v !== name; });
+    ['lobby', 'session', 'eval', 'report', 'progress'].forEach(v => { $('#view-' + v).hidden = v !== name; });
     document.documentElement.style.overflow = name === 'session' ? 'hidden' : '';
     if (name === 'session' && editor) setTimeout(() => editor.refresh(), 0);
   }
